@@ -327,9 +327,11 @@ export default class BlogPost extends React.Component {
         </a>
       </div>
     ) : null;
-    content.splice(content.length - 1, 0, nextArticleLink);
-    const blogText = content[1].props.children[2].props.text;
+    const blogText = content[1].props.children[2] ? (
+      content[1].props.children[2].props.text
+    ) : content[0].props.children[2].props.text;
     blogText.splice(1, 0, specialReportSideList);
+    content.splice(content.length - 1, 0, nextArticleLink);
     return (
       <article
         itemScope
