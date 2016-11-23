@@ -7,7 +7,7 @@ import React from 'react';
 import Rubric from './parts/rubric';
 import ShareBar from './parts/blog-post-sharebar';
 import Text from './parts/text';
-import MoreSpecialReportsList from './parts/more-special-reports-list';
+import { moreSpecialReportsList, nextSpecialReportArticle } from './parts/special-reports';
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
@@ -198,11 +198,7 @@ export default class BlogPost extends React.Component {
   render() {
     const flyTitle = this.props.flyTitle;
     const specialReportList = this.props.specialReportList.entries;
-    // specialReportList.map((article, index) => {
-    //   if (article.flyTitle === flyTitle) {
-    //     specialReportList.unshift(specialReportList.splice(index, 1)[0]);
-    //   }
-    // });
+    const isSpecialReport = this.props.printSectionName === 'Special report';
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -279,54 +275,17 @@ export default class BlogPost extends React.Component {
       </div>
     );
     const TitleComponent = this.props.TitleComponent;
-    const isSpecialReport = this.props.printSectionName === 'Special report';
     const specialReportHeader = isSpecialReport ? (
       <span className="blog-post__special-report-header">
         Special Report
       </span>
     ) : null;
-    // const specialReportSideList = isSpecialReport ? (
-    //   <MoreSpecialReportsList
-    //     articlesList={specialReportList}
-    //   />
-    // ) : null;
     const specialReportSideList = isSpecialReport ? (
-      <div className="blog-post__special-report-aside">
-        <span className="blog-post-side-flytitle">{flyTitle}</span>
-        <span className="blog-post-side-text">More in this special report:</span>
-        <ul className="blog-post__special-report-list">
-          {specialReportList.map((article, index) => {
-            const isCurrentArticleSelected = article.flyTitle === flyTitle;
-            const bulletPointClassName = isCurrentArticleSelected ? 'blog-post__special-report-bullet' : '';
-            const firstLinkClassName = isCurrentArticleSelected ? 'blog-post__special-report-first-link' : '';
-            return (
-              <li key={index} className={classnames('blog-post__special-report-article', bulletPointClassName)}>
-                <a
-                  href={article.webURL}
-                  className={classnames('blog-post__special-report-article-link', firstLinkClassName)}
-                >
-                  <span className="blog-post__special-report-flytitle">{article.flyTitle}:</span>
-                  <span className="blog-post__special-report-title">{article.title}</span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      moreSpecialReportsList(specialReportList, flyTitle)
     ) : null;
-    let nextArticleinList = null;
-    specialReportList.map((article, index) => {
-      if (flyTitle === article.flyTitle) {
-        nextArticleinList = specialReportList[index + 1];
-      }
-    });
-    const nextArticleLink = isSpecialReport && nextArticleinList ? (
-      <div className="blog-post__special-report-next-article">
-        <a className="blog-post__special-report-next-article-link" href={nextArticleinList.webURL}>
-          → {nextArticleinList.flyTitle}: {nextArticleinList.title}
-        </a>
-      </div>
-    ) : null;
+    const nextArticleLink = isSpecialReport ? nextSpecialReportArticle(specialReportList, flyTitle) : null;
+    // Sometimes there is no rubric provided from Drupal and so there aren't as many elements in the array
+    // This is checking if it exists to put the content after the first paragraph.
     const blogText = content[1].props.children[2] ? (
       content[1].props.children[2].props.text
     ) : content[0].props.children[2].props.text;
