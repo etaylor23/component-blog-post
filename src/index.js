@@ -198,11 +198,11 @@ export default class BlogPost extends React.Component {
   render() {
     const flyTitle = this.props.flyTitle;
     const specialReportList = this.props.specialReportList.entries;
-    specialReportList.map((article, index) => {
-      if (article.flyTitle === flyTitle) {
-        specialReportList.unshift(specialReportList.splice(index, 1)[0]);
-      }
-    });
+    // specialReportList.map((article, index) => {
+    //   if (article.flyTitle === flyTitle) {
+    //     specialReportList.unshift(specialReportList.splice(index, 1)[0]);
+    //   }
+    // });
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -285,11 +285,51 @@ export default class BlogPost extends React.Component {
         Special Report
       </span>
     ) : null;
+    // const specialReportSideList = isSpecialReport ? (
+    //   <MoreSpecialReportsList
+    //     articlesList={specialReportList}
+    //   />
+    // ) : null;
     const specialReportSideList = isSpecialReport ? (
-      <MoreSpecialReportsList
-        articlesList={specialReportList}
-      />
+      <div className="blog-post__special-report-aside">
+        <span className="blog-post-side-flytitle">{flyTitle}</span>
+        <span className="blog-post-side-text">More in this special report:</span>
+        <ul className="blog-post__special-report-list">
+          {specialReportList.map((article, index) => {
+            const isCurrentArticleSelected = article.flyTitle === flyTitle;
+            const bulletPointClassName = isCurrentArticleSelected ? 'blog-post__special-report-bullet' : '';
+            const firstLinkClassName = isCurrentArticleSelected ? 'blog-post__special-report-first-link' : '';
+            return (
+              <li key={index} className={classnames('blog-post__special-report-article', bulletPointClassName)}>
+                <a
+                  href={article.webURL}
+                  className={classnames('blog-post__special-report-article-link', firstLinkClassName)}
+                >
+                  <span className="blog-post__special-report-flytitle">{article.flyTitle}:</span>
+                  <span className="blog-post__special-report-title">{article.title}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     ) : null;
+    let nextArticleinList = null;
+    specialReportList.map((article, index) => {
+      if (flyTitle === article.flyTitle) {
+        nextArticleinList = specialReportList[index + 1];
+      }
+    });
+    const nextArticleLink = isSpecialReport && nextArticleinList ? (
+      <div className="blog-post__special-report-next-article">
+        <a className="blog-post__special-report-next-article-link" href={nextArticleinList.webURL}>
+          → {nextArticleinList.flyTitle}: {nextArticleinList.title}
+        </a>
+      </div>
+    ) : null;
+    content.splice(content.length - 1, 0, nextArticleLink);
+    const blogText = content[1].props.children[2].props.text;
+    blogText.splice(1, 0, specialReportSideList);
     return (
       <article
         itemScope
@@ -307,7 +347,6 @@ export default class BlogPost extends React.Component {
           titleClassName={isSpecialReport ? 'flytitle-and-title__special-title' : ''}
           flyTitleClassName={isSpecialReport ? 'flytitle-and-title__special-flytitle' : ''}
         />
-        {specialReportSideList}
         {content}
       </article>
     );
