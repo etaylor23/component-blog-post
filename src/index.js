@@ -59,9 +59,9 @@ export default class BlogPost extends React.Component {
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
       printSectionName: React.PropTypes.string,
-      specialReportList: React.PropTypes.shape(React.PropTypes.arrayof({
+      specialReportList: React.PropTypes.shape(React.PropTypes.arrayOf({
         flyTitle: React.PropTypes.string,
-        title: React.PropTypes.string.isRequired,
+        title: React.PropTypes.string,
         webURL: React.PropTypes.string,
       })),
     };
@@ -291,8 +291,10 @@ export default class BlogPost extends React.Component {
     const blogText = isSpecialReport && content[1].props.children[2] ? (
       content[1].props.children[2].props.text
     ) : content[0].props.children[2].props.text;
-    blogText.splice(1, 0, specialReportSideList);
-    content.splice(content.length - 1, 0, nextArticleLink);
+    if (isSpecialReport && (blogText || (content && nextArticleLink))) {
+      blogText.splice(1, 0, specialReportSideList);
+      content.splice(content.length - 1, 0, nextArticleLink);
+    }
     return (
       <article
         itemScope
