@@ -30,11 +30,13 @@ export function moreSpecialReportsList(articlesList, flyTitle) {
 
 export function nextSpecialReportArticle(specialReportList, flyTitle) {
   let nextArticleinList = null;
+  /* eslint-disable array-callback-return */
   specialReportList.map((article, index) => {
     if (flyTitle === article.flyTitle) {
       nextArticleinList = specialReportList[index + 1];
     }
   });
+  /* eslint-enable array-callback-return */
   return nextArticleinList ? (
     <div className="blog-post__special-report-next-article">
       <a className="blog-post__special-report-next-article-link" href={nextArticleinList.webURL}>

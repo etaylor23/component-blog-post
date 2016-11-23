@@ -195,7 +195,9 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
+  /* eslint-disable complexity */
   render() {
+    /* eslint-enableable complexity */
     const flyTitle = this.props.flyTitle;
     const specialReportList = this.props.specialReportList.entries;
     const isSpecialReport = this.props.printSectionName === 'Special report';
@@ -286,7 +288,7 @@ export default class BlogPost extends React.Component {
     const nextArticleLink = isSpecialReport ? nextSpecialReportArticle(specialReportList, flyTitle) : null;
     // Sometimes there is no rubric provided from Drupal and so there aren't as many elements in the array
     // This is checking if it exists to put the content after the first paragraph.
-    const blogText = content[1].props.children[2] ? (
+    const blogText = isSpecialReport && content[1].props.children[2] ? (
       content[1].props.children[2].props.text
     ) : content[0].props.children[2].props.text;
     blogText.splice(1, 0, specialReportSideList);
