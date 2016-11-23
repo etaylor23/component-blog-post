@@ -7,6 +7,7 @@ import React from 'react';
 import Rubric from './parts/rubric';
 import ShareBar from './parts/blog-post-sharebar';
 import Text from './parts/text';
+import MoreSpecialReportsList from './parts/more-special-reports-list';
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
@@ -57,6 +58,12 @@ export default class BlogPost extends React.Component {
       viewCommentsLabel: React.PropTypes.string.isRequired,
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
+      printSectionName: React.PropTypes.string,
+      specialReportList: React.PropTypes.shape(React.PropTypes.arrayof({
+        flyTitle: React.PropTypes.string,
+        title: React.PropTypes.string.isRequired,
+        webURL: React.PropTypes.string,
+      })),
     };
   }
   static get defaultProps() {
@@ -189,6 +196,13 @@ export default class BlogPost extends React.Component {
   }
 
   render() {
+    const flyTitle = this.props.flyTitle;
+    const specialReportList = this.props.specialReportList.entries;
+    specialReportList.map((article, index) => {
+      if (article.flyTitle === flyTitle) {
+        specialReportList.unshift(specialReportList.splice(index, 1)[0]);
+      }
+    });
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -265,6 +279,17 @@ export default class BlogPost extends React.Component {
       </div>
     );
     const TitleComponent = this.props.TitleComponent;
+    const isSpecialReport = this.props.printSectionName === 'Special report';
+    const specialReportHeader = isSpecialReport ? (
+      <span className="blog-post__special-report-header">
+        Special Report
+      </span>
+    ) : null;
+    const specialReportSideList = isSpecialReport ? (
+      <MoreSpecialReportsList
+        articlesList={specialReportList}
+      />
+    ) : null;
     return (
       <article
         itemScope
@@ -274,7 +299,15 @@ export default class BlogPost extends React.Component {
         role="article"
         ref="article"
       >
-        <TitleComponent title={this.props.title} flyTitle={this.props.flyTitle} Heading={"h1"} />
+        {specialReportHeader}
+        <TitleComponent
+          title={this.props.title}
+          flyTitle={this.props.flyTitle}
+          Heading={"h1"}
+          titleClassName={isSpecialReport ? 'flytitle-and-title__special-title' : ''}
+          flyTitleClassName={isSpecialReport ? 'flytitle-and-title__special-flytitle' : ''}
+        />
+        {specialReportSideList}
         {content}
       </article>
     );

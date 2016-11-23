@@ -13,6 +13,7 @@
   --slim-max-width: 290px;
   --slim-margin: 30px;
   --slim-margin-top: 8px;
+  --bullet-point-arrow: url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgogIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0iI2UzMTIwYiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDggNDg7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KICAgPHBvbHlnb24gcG9pbnRzPSIxNy42LDE0LjggMjAuNCwxMiAzMi40LDI0IDIwLjQsMzYgMTcuNiwzMy4yIDI2LjcsMjQgCSIvPgo8L3N2Zz4K');
 }
 
 @custom-media --blog-post-small-layout screen and (width >= 690px);
@@ -192,6 +193,90 @@
   max-width: var(--slim-max-width);
 }
 
+.blog-post__special-report-header {
+  display: block;
+  width: 120px;
+  height: 28px;
+  padding: 1px 12px;
+  color: var(--color-thimphu);
+  font-size: 16px;
+  letter-spacing: var(--text-letter-spacing-serif-medium-on-step-0);
+  line-height: 1.7em;
+  text-transform: uppercase;
+  background-color: var(--color-economist);
+}
+
+.blog-post-side-flytitle {
+  display: block;
+  color: var(--color-economist);
+  font-family: EconSansCnd-Regular, EconSans;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 0.3;
+}
+
+.blog-post-side-flytitle::before {
+  content: '';
+  display: block;
+  width: 47px;
+  height: 7px;
+  margin-bottom: 1.2em;
+  background-color: var(--color-economist);
+}
+
+.blog-post-side-text {
+  margin: 0 0 1em;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 2.2em;
+}
+
+.blog-post__special-report-list {
+  overflow: hidden;
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blog-post__special-report-article {
+  display: block;
+  line-height: 0.8em;
+  border-top: 1px solid var(--color-cardiff);
+}
+
+.blog-post__special-report-article:hover .blog-post__special-report-title {
+  color: var(--color-chicago);
+}
+
+.blog-post__special-report-article-link {
+  display: block;
+  padding: 0.5em 0;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.blog-post__special-report-flytitle {
+  display: block;
+  color: var(--color-moscow);
+  font-weight: bold;
+}
+
+.blog-post__special-report-title {
+  color: var(--color-moscow);
+  transition: color 0.2s ease;
+}
+
+.blog-post__special-report-bullet {
+  background: var(--bullet-point-arrow);
+  background-position: -2px 3px;
+  background-repeat: no-repeat;
+  background-size: 24px;
+}
+
+.blog-post__special-report-first-link {
+  margin-left: 20px;
+}
 
 @media (--blog-post-small-layout) {
   .blog-post__inline-image--generic {
