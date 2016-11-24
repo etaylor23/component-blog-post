@@ -10,8 +10,8 @@ export function siblingList(
   /* eslint-disable quotes*/
   return (
     <div className={`blog-post__${ elementClassName }-aside`}>
-      <span className={`blog-post-side-flytitle`}>{flyTitle}</span>
-      <span className={`blog-post-side-text`}>More in this {sectionName.toLowerCase()}:</span>
+      <span className={`blog-post__side-flytitle`}>{flyTitle}</span>
+      <span className={`blog-post__side-text`}>More in this {sectionName.toLowerCase()}:</span>
       <ul className={`blog-post__${ elementClassName }-list`}>
         {articlesList.map((article, index) => {
           const isCurrentArticleSelected = article.flyTitle === flyTitle;
