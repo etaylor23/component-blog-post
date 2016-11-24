@@ -201,8 +201,8 @@ export default class BlogPost extends React.Component {
     /* eslint-enableable complexity */
     const flyTitle = this.props.flyTitle;
     const showSiblingArticlesList = this.props.showSiblingArticlesList;
-    const printSectionName = this.props.printSectionName;
-    const elementClassName = printSectionName.replace(' ', '-').toLowerCase();
+    const sectionName = this.props.printSectionName;
+    const elementClassName = sectionName.replace(' ', '-').toLowerCase();
     const siblingArticles = showSiblingArticlesList ? this.props.specialReportList.entries : null;
     let content = [];
     // aside and text content are wrapped together into a component.
@@ -282,11 +282,11 @@ export default class BlogPost extends React.Component {
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
       <span className={classnames(`blog-post__${ elementClassName }-header`)}>
-        {printSectionName}
+        {sectionName}
       </span>
     ) : null;
     const siblingArticlesList = showSiblingArticlesList ? (
-      siblingList(siblingArticles, flyTitle, elementClassName, printSectionName)
+      siblingList(siblingArticles, flyTitle, elementClassName, sectionName)
     ) : null;
     const nextArticleLink = showSiblingArticlesList ? (
       nextSiblingArticle(siblingArticles, flyTitle, elementClassName)
