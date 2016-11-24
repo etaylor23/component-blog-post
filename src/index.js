@@ -7,7 +7,7 @@ import React from 'react';
 import Rubric from './parts/rubric';
 import ShareBar from './parts/blog-post-sharebar';
 import Text from './parts/text';
-import { moreSpecialReportsList, nextSpecialReportArticle } from './parts/special-reports';
+import { siblingList, nextSiblingArticle } from './parts/blog-post-siblings-list';
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
@@ -64,6 +64,7 @@ export default class BlogPost extends React.Component {
         title: React.PropTypes.string,
         webURL: React.PropTypes.string,
       })),
+      showSiblingArticlesList: React.PropTypes.bool,
     };
   }
   static get defaultProps() {
@@ -199,8 +200,10 @@ export default class BlogPost extends React.Component {
   render() {
     /* eslint-enableable complexity */
     const flyTitle = this.props.flyTitle;
-    const specialReportList = this.props.specialReportList.entries;
-    const isSpecialReport = this.props.printSectionName === 'Special report';
+    const showSiblingArticlesList = this.props.showSiblingArticlesList;
+    const printSectionName = this.props.printSectionName;
+    const elementClassName = printSectionName.replace(' ', '-').toLowerCase();
+    const siblingArticles = showSiblingArticlesList ? this.props.specialReportList.entries : null;
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -277,22 +280,27 @@ export default class BlogPost extends React.Component {
       </div>
     );
     const TitleComponent = this.props.TitleComponent;
-    const specialReportHeader = isSpecialReport ? (
-      <span className="blog-post__special-report-header">
-        Special Report
+    const articleHeader = showSiblingArticlesList ? (
+      <span className={classnames(`blog-post__${ elementClassName }-header`)}>
+        {printSectionName}
       </span>
     ) : null;
-    const specialReportSideList = isSpecialReport ? (
-      moreSpecialReportsList(specialReportList, flyTitle)
+    const siblingArticlesList = showSiblingArticlesList ? (
+      siblingList(siblingArticles, flyTitle, elementClassName, printSectionName)
     ) : null;
-    const nextArticleLink = isSpecialReport ? nextSpecialReportArticle(specialReportList, flyTitle) : null;
+    const nextArticleLink = showSiblingArticlesList ? (
+      nextSiblingArticle(siblingArticles, flyTitle, elementClassName)
+    ) : null;
     // Sometimes there is no rubric provided from Drupal and so there aren't as many elements in the array
     // This is checking if it exists to put the content after the first paragraph.
-    const blogText = isSpecialReport && content[1].props.children[2] ? (
-      content[1].props.children[2].props.text
-    ) : content[0].props.children[2].props.text;
-    if (isSpecialReport && (blogText || (content && nextArticleLink))) {
-      blogText.splice(1, 0, specialReportSideList);
+    let blogText = null;
+    if (showSiblingArticlesList && content[1].props.children[2]) {
+      blogText = content[1].props.children[2].props.text;
+    } else if (showSiblingArticlesList && content[0].props.children && content[0].props.children[2]) {
+      blogText = content[0].props.children[2].props.text;
+    }
+    if (showSiblingArticlesList && (blogText || (content && nextArticleLink))) {
+      blogText.splice(1, 0, siblingArticlesList);
       content.splice(content.length - 1, 0, nextArticleLink);
     }
     return (
@@ -304,13 +312,13 @@ export default class BlogPost extends React.Component {
         role="article"
         ref="article"
       >
-        {specialReportHeader}
+        {articleHeader}
         <TitleComponent
           title={this.props.title}
           flyTitle={this.props.flyTitle}
           Heading={"h1"}
-          titleClassName={isSpecialReport ? 'flytitle-and-title__special-title' : ''}
-          flyTitleClassName={isSpecialReport ? 'flytitle-and-title__special-flytitle' : ''}
+          titleClassName={showSiblingArticlesList ? `flytitle-and-title__${ elementClassName }-title` : ''}
+          flyTitleClassName={showSiblingArticlesList ? `flytitle-and-title__${ elementClassName }-flytitle` : ''}
         />
         {content}
       </article>
