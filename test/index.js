@@ -26,8 +26,8 @@ const requiredProps = {
   commentsUri: 'http://google.com',
   viewCommentsLabel: 'foo',
   commentStatus: 'readwrite',
-  specialReportList: {entries: {flyTitle: 'special report flyTitle', title: 'special report flyTitle'}},
-  printSectionName: 'Section name',
+  siblingArticles: {entries: {flyTitle: 'special report flyTitle', title: 'special report flyTitle'}},
+  sectionName: 'Section name',
   TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
 };
 
