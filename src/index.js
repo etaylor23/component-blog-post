@@ -11,6 +11,7 @@ import { siblingList, nextSiblingArticle } from './parts/blog-post-siblings-list
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
+import slug from 'slug';
 
 function twoDigits(int) {
   return int > 9 ? '' + int : '0' + int; // eslint-disable-line
@@ -58,13 +59,14 @@ export default class BlogPost extends React.Component {
       viewCommentsLabel: React.PropTypes.string.isRequired,
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
-      printSectionName: React.PropTypes.string,
-      specialReportList: React.PropTypes.shape(React.PropTypes.arrayOf({
+      sectionName: React.PropTypes.string,
+      siblingArticles: React.PropTypes.shape(React.PropTypes.arrayOf({
         flyTitle: React.PropTypes.string,
         title: React.PropTypes.string,
         webURL: React.PropTypes.string,
       })),
       showSiblingArticlesList: React.PropTypes.bool,
+      sideText: React.PropTypes.string,
     };
   }
   static get defaultProps() {
@@ -201,9 +203,9 @@ export default class BlogPost extends React.Component {
     /* eslint-enableable complexity */
     const flyTitle = this.props.flyTitle;
     const showSiblingArticlesList = this.props.showSiblingArticlesList;
-    const sectionName = this.props.printSectionName;
-    const elementClassName = sectionName.replace(' ', '-').toLowerCase();
-    const siblingArticles = showSiblingArticlesList ? this.props.specialReportList.entries : null;
+    const sectionName = this.props.sectionName;
+    const elementClassName = slug(sectionName, { lower: true });
+    const siblingArticles = showSiblingArticlesList ? this.props.siblingArticles.entries : null;
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -286,21 +288,27 @@ export default class BlogPost extends React.Component {
       </span>
     ) : null;
     const siblingArticlesList = showSiblingArticlesList ? (
-      siblingList(siblingArticles, flyTitle, elementClassName, sectionName)
+      siblingList(
+        siblingArticles,
+        flyTitle,
+        elementClassName,
+        sectionName,
+        this.props.sideText
+      )
     ) : null;
     const nextArticleLink = showSiblingArticlesList ? (
       nextSiblingArticle(siblingArticles, flyTitle, elementClassName)
     ) : null;
-    // Sometimes there is no rubric provided from Drupal and so there aren't as many elements in the array
-    // This is checking if it exists to put the content after the first paragraph.
-    let blogText = null;
-    if (showSiblingArticlesList && content[1].props.children[2]) {
-      blogText = content[1].props.children[2].props.text;
-    } else if (showSiblingArticlesList && content[0].props.children && content[0].props.children[2]) {
-      blogText = content[0].props.children[2].props.text;
-    }
-    if (showSiblingArticlesList && (blogText || (content && nextArticleLink))) {
-      blogText.splice(1, 0, siblingArticlesList);
+    const innerContentElements = content.filter((contentElement) => {
+      const innerContent = contentElement.key === 'inner-content';
+      return innerContent;
+    })[0].props.children;
+    const blogPostTextElements = innerContentElements.filter((contentElement) => {
+      const blogPostText = contentElement.key === 'blog-post__text';
+      return blogPostText;
+    })[0].props.text;
+    if (showSiblingArticlesList && (blogPostTextElements || (content && nextArticleLink))) {
+      blogPostTextElements.splice(1, 0, siblingArticlesList);
       content.splice(content.length - 1, 0, nextArticleLink);
     }
     return (

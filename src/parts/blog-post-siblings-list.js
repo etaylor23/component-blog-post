@@ -5,13 +5,15 @@ export function siblingList(
   articlesList,
   flyTitle,
   elementClassName,
-  sectionName
+  sectionName,
+  sideText
 ) {
+  const blogSideText = sideText ? sideText : `More in this ${ sectionName.toLowerCase() }:`;
   /* eslint-disable quotes*/
   return (
     <div className={`blog-post__${ elementClassName }-aside`}>
-      <span className={`blog-post__side-flytitle`}>{flyTitle}</span>
-      <span className={`blog-post__side-text`}>More in this {sectionName.toLowerCase()}:</span>
+      <span className="blog-post__side-flytitle">{flyTitle}</span>
+      <span className="blog-post__side-text">{blogSideText}</span>
       <ul className={`blog-post__${ elementClassName }-list`}>
         {articlesList.map((article, index) => {
           const isCurrentArticleSelected = article.flyTitle === flyTitle;
@@ -37,13 +39,11 @@ export function siblingList(
 
 export function nextSiblingArticle(siblingArticles, flyTitle, elementClassName) {
   let nextArticleinList = null;
-  /* eslint-disable array-callback-return */
-  siblingArticles.map((article, index) => {
+  siblingArticles.forEach((article, index) => {
     if (flyTitle === article.flyTitle) {
       nextArticleinList = siblingArticles[index + 1];
     }
   });
-  /* eslint-enable array-callback-return */
   return nextArticleinList ? (
     <div className={classnames(`blog-post__${ elementClassName }-next-article`)}>
       <a className={classnames(`blog-post__${ elementClassName }-next-article-link`)} href={nextArticleinList.webURL}>
