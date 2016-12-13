@@ -7,7 +7,7 @@ import React from 'react';
 import Rubric from './parts/rubric';
 import ShareBar from './parts/blog-post-sharebar';
 import Text from './parts/text';
-import { siblingList, nextSiblingArticle } from './parts/blog-post-siblings-list';
+import { siblingList } from './parts/blog-post-siblings-list';
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
@@ -60,13 +60,14 @@ export default class BlogPost extends React.Component {
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
       sectionName: React.PropTypes.string,
-      siblingArticles: React.PropTypes.shape(React.PropTypes.arrayOf({
+      issueSiblings: React.PropTypes.shape(React.PropTypes.arrayOf({
         flyTitle: React.PropTypes.string,
         title: React.PropTypes.string,
         webURL: React.PropTypes.string,
       })),
       showSiblingArticlesList: React.PropTypes.bool,
       sideText: React.PropTypes.string,
+      nextArticleLink: React.PropTypes.node,
     };
   }
   static get defaultProps() {
@@ -205,7 +206,7 @@ export default class BlogPost extends React.Component {
     const showSiblingArticlesList = this.props.showSiblingArticlesList;
     const sectionName = this.props.sectionName;
     const elementClassName = slug(sectionName, { lower: true });
-    const siblingArticles = showSiblingArticlesList ? this.props.siblingArticles.entries : null;
+    const siblingArticles = showSiblingArticlesList ? this.props.issueSiblings.entries : null;
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -296,9 +297,6 @@ export default class BlogPost extends React.Component {
         this.props.sideText
       )
     ) : null;
-    const nextArticleLink = showSiblingArticlesList ? (
-      nextSiblingArticle(siblingArticles, flyTitle, elementClassName)
-    ) : null;
     const innerContentElements = showSiblingArticlesList ? (content.filter((contentElement) => {
       const innerContent = contentElement.key === 'inner-content';
       return innerContent;
@@ -307,9 +305,9 @@ export default class BlogPost extends React.Component {
       const blogPostText = contentElement.key === 'blog-post__text';
       return blogPostText;
     })[0].props.text) : null;
-    if (showSiblingArticlesList && (blogPostTextElements || (content && nextArticleLink))) {
+    if (showSiblingArticlesList && (blogPostTextElements || (content && this.props.nextArticleLink))) {
       blogPostTextElements.splice(1, 0, siblingArticlesList);
-      content.splice(content.length - 1, 0, nextArticleLink);
+      content.splice(content.length - 1, 0, this.props.nextArticleLink);
     }
     return (
       <article

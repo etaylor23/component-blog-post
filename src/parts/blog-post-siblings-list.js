@@ -36,19 +36,3 @@ export function siblingList(
   );
   /* eslint-enable quotes */
 }
-
-export function nextSiblingArticle(siblingArticles, flyTitle, elementClassName) {
-  let nextArticleinList = null;
-  siblingArticles.forEach((article, index) => {
-    if (flyTitle === article.flyTitle) {
-      nextArticleinList = siblingArticles[index + 1];
-    }
-  });
-  return nextArticleinList ? (
-    <div className={classnames(`blog-post__${ elementClassName }-next-article`)}>
-      <a className={classnames(`blog-post__${ elementClassName }-next-article-link`)} href={nextArticleinList.webURL}>
-        → {nextArticleinList.flyTitle}: {nextArticleinList.title}
-      </a>
-    </div>
-  ) : null;
-}
