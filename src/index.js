@@ -282,7 +282,7 @@ export default class BlogPost extends React.Component {
     );
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
-      <span className={classnames(`blog-post__${ elementClassName }-header`)}>
+      <span className={`blog-post__${ elementClassName }-header`}>
         {sectionName}
       </span>
     ) : null;
