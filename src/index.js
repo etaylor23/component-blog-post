@@ -201,7 +201,7 @@ export default class BlogPost extends React.Component {
 
   /* eslint-disable complexity */
   render() {
-    /* eslint-enableable complexity */
+    /* eslint-enable complexity */
     const { flyTitle, showSiblingArticlesList, sectionName } = this.props;
     const elementClassName = slug(sectionName, { lower: true });
     const siblingArticles = showSiblingArticlesList ? this.props.issueSiblings.entries : null;
