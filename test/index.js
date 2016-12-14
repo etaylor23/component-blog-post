@@ -22,16 +22,53 @@ const requiredProps = {
   section: 'Required section',
   text: 'Required text',
   title: 'Required title',
+  type: 'blog',
+  id: 'test blog',
+  publicationDate: '01/02/03',
   commentCount: 10,
   commentsUri: 'http://google.com',
   viewCommentsLabel: 'foo',
   commentStatus: 'readwrite',
-  siblingArticles: {entries: {flyTitle: 'special report flyTitle', title: 'special report flyTitle'}},
+  issueSiblings: {entries: [{key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'}]},
+  elementClassName: 'blog-post__classname',
   sectionName: 'Section name',
   TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
 };
 
+const otherProps = {
+  flyTitle: 'Other flyTitle',
+  section: 'Other section',
+  text: 'Other text',
+  title: 'Other title',
+  type: 'blog',
+  id: 'test blog',
+  publicationDate: '02/03/04',
+  commentCount: 10,
+  commentsUri: 'http://google.com',
+  viewCommentsLabel: 'foo',
+  commentStatus: 'readwrite',
+  issueSiblings: {
+    entries: [
+      {key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'},
+      {key: '2', flyTitle: 'flytitle2', title: 'title2', webURL: 'www.2.com'},
+      {key: '3', flyTitle: 'flytitle3', title: 'title3', webURL: 'www.3.com'},
+    ]
+  },
+  showSiblingArticlesList: true,
+  elementClassName: 'blog-post__classname',
+  sectionName: 'Special report',
+  sideText: 'More in this report',
+  TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
+  text: [
+    "paragraph 1 paragraph 1 paragraph 1",
+    "paragraph 2 paragraph 2 paragraph 2",
+    "paragraph 3 paragraph 3 paragraph 3",
+    "paragraph 4 paragraph 4 paragraph 4",
+  ]
+}
+
 const mountComponentWithProps = mountComponent(requiredProps);
+const mountComponentWithOtherProps = mountComponent(otherProps)
 describe('BlogPost', () => {
   it('is compatible with React.Component', () => {
     BlogPost.should.be.a('function')
@@ -68,6 +105,22 @@ describe('BlogPost', () => {
       post.find('.blog-post__section').should.have.text(requiredProps.section);
     });
 
+  });
+
+  describe('Blog post siblings list', () => {
+    let post = null;
+    before(() => {
+      post = mountComponentWithOtherProps();
+    });
+
+    it('renders sideText given from props', () => {
+      post.find('.blog-post__side-text').should.have.text(otherProps.sideText);
+    });
+
+    it('renders a list of siblings', () => {
+      post.find('.blog-post__special-report-list').should.have.exactly(3).descendants('.blog-post__special-report-article');
+      post.find('.blog-post__special-report-list').should.have.tagName('ul');
+    });
   });
 
   describe('Comments', () => {
