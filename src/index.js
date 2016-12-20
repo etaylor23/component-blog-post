@@ -203,8 +203,9 @@ export default class BlogPost extends React.Component {
   render() {
     /* eslint-enable complexity */
     const { flyTitle, showSiblingArticlesList, sectionName } = this.props;
-    const elementClassName = slug(sectionName, { lower: true });
-    const siblingArticles = showSiblingArticlesList ? this.props.issueSiblings.entries : null;
+    const elementClassName = showSiblingArticlesList && sectionName ? slug(sectionName, { lower: true }) : null;
+    const siblingArticles = showSiblingArticlesList && this.props.issueSiblings ?
+      this.props.issueSiblings.entries : null;
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter

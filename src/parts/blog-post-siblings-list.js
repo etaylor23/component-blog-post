@@ -8,10 +8,13 @@ export function siblingList(
   sectionName,
   sideText
 ) {
+  if (!articlesList) {
+    return null;
+  }
   const blogSideText = sideText ? sideText : `More in this ${ sectionName.toLowerCase() }:`;
   /* eslint-disable quotes*/
   return (
-    <div className={`blog-post__${ elementClassName }-aside`}>
+    <div className={`blog-post__${ elementClassName }-aside`} key="blog-post__siblings-list">
       <span className="blog-post__side-flytitle">{flyTitle}</span>
       <span className="blog-post__side-text">{blogSideText}</span>
       <ul className={`blog-post__${ elementClassName }-list`}>
