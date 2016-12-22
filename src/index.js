@@ -259,7 +259,7 @@ export default class BlogPost extends React.Component {
       );
     }
     content.push(
-      <div className="blog-post__bottom-panel">
+      <div className="blog-post__bottom-panel" key="blog-post__bottom-panel">
         {shareBarDefault}
         {commentSection}
       </div>
