@@ -13,22 +13,28 @@ export function siblingList(
   }
   const blogSideText = sideText ? sideText : `More in this ${ sectionName.toLowerCase() }:`;
   return (
-    <div className={`blog-post__${ elementClassName }-aside`} key="blog-post__siblings-list">
+    <div className={`blog-post__siblings-list-aside ${ elementClassName }`} key="blog-post__siblings-list">
       <span className="blog-post__side-flytitle">{flyTitle}</span>
       <span className="blog-post__side-text">{blogSideText}</span>
-      <ul className={`blog-post__${ elementClassName }-list`}>
+      <ul className={`blog-post__siblings-list ${ elementClassName }`}>
         {articlesList.map((article, index) => {
           const isCurrentArticleSelected = article.flyTitle === flyTitle;
-          const bulletPointClassName = isCurrentArticleSelected ? `blog-post__${ elementClassName }-bullet` : '';
-          const firstLinkClassName = isCurrentArticleSelected ? `blog-post__${ elementClassName }-selected-link` : '';
+          const bulletPointClassName = isCurrentArticleSelected ?
+            `blog-post__siblings-list-bullet ${ elementClassName }` : '';
+          const firstLinkClassName = isCurrentArticleSelected ?
+            `blog-post__siblings-list-selected-link ${ elementClassName }` : '';
           return (
-            <li key={index} className={classnames(`blog-post__${ elementClassName }-article`, bulletPointClassName)}>
+            <li key={index} className={classnames(
+                `blog-post__siblings-list-article ${ elementClassName }`, bulletPointClassName
+            )}>
               <a
                 href={article.webURL}
-                className={classnames(`blog-post__${ elementClassName }-article-link`, firstLinkClassName)}
+                className={classnames(
+                  `blog-post__siblings-list-article-link ${ elementClassName }`, firstLinkClassName
+                )}
               >
-                <span className={`blog-post__${ elementClassName }-flytitle`}>{article.flyTitle}:</span>
-                <span className={`blog-post__${ elementClassName }-title`}>{article.title}</span>
+                <span className={`blog-post__siblings-list-flytitle ${ elementClassName }`}>{article.flyTitle}:</span>
+                <span className={`blog-post__siblings-list-title ${ elementClassName }`}>{article.title}</span>
               </a>
             </li>
           );

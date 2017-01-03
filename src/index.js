@@ -11,7 +11,6 @@ import { siblingList } from './parts/blog-post-siblings-list';
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
-import slug from 'slug';
 
 function twoDigits(int) {
   return int > 9 ? '' + int : '0' + int; // eslint-disable-line
@@ -68,6 +67,7 @@ export default class BlogPost extends React.Component {
       sideText: React.PropTypes.string,
       nextArticleLink: React.PropTypes.node,
       articleListPosition: React.PropTypes.number,
+      classNameModifier: React.PropTypes.string,
     };
   }
   static get defaultProps() {
@@ -227,7 +227,8 @@ export default class BlogPost extends React.Component {
 
   render() {
     const { flyTitle, showSiblingArticlesList, sectionName } = this.props;
-    const elementClassName = showSiblingArticlesList && sectionName ? slug(sectionName, { lower: true }) : null;
+    const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
+      `blog-post__siblings-list--${ this.props.classNameModifier }` : null;
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -305,7 +306,7 @@ export default class BlogPost extends React.Component {
     );
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
-      <span className={`blog-post__${ elementClassName }-header`}>
+      <span className={`blog-post__siblings-list-header ${ elementClassName }`}>
         {sectionName}
       </span>
     ) : null;
@@ -330,8 +331,10 @@ export default class BlogPost extends React.Component {
           title={this.props.title}
           flyTitle={this.props.flyTitle}
           Heading={"h1"}
-          titleClassName={showSiblingArticlesList ? `flytitle-and-title__${ elementClassName }-title` : ''}
-          flyTitleClassName={showSiblingArticlesList ? `flytitle-and-title__${ elementClassName }-flytitle` : ''}
+          titleClassName={showSiblingArticlesList ?
+            `flytitle-and-title__siblings-list-title ${ elementClassName }` : ''}
+          flyTitleClassName={showSiblingArticlesList ?
+            `flytitle-and-title__siblings-list-flytitle ${ elementClassName }` : ''}
         />
         {content}
       </article>
