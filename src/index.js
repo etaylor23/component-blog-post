@@ -60,14 +60,14 @@ export default class BlogPost extends React.Component {
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
       sectionName: React.PropTypes.string,
-      issueSiblings: React.PropTypes.shape(React.PropTypes.arrayOf({
-        flyTitle: React.PropTypes.string,
-        title: React.PropTypes.string,
-        webURL: React.PropTypes.string,
-      })),
+      issueSiblings: React.PropTypes.objectOf(React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.array,
+      ])),
       showSiblingArticlesList: React.PropTypes.bool,
       sideText: React.PropTypes.string,
       nextArticleLink: React.PropTypes.node,
+      articleListPosition: React.PropTypes.number,
     };
   }
   static get defaultProps() {
@@ -199,13 +199,35 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
-  /* eslint-disable complexity */
+  addSiblingsList(showSiblingArticlesList, flyTitle, sectionName, elementClassName, content) {
+    const siblingArticles = showSiblingArticlesList && this.props.issueSiblings ?
+    this.props.issueSiblings.entries : null;
+    const siblingArticlesList = showSiblingArticlesList ? (
+      siblingList(
+        siblingArticles,
+        flyTitle,
+        elementClassName,
+        sectionName,
+        this.props.sideText
+      )
+    ) : null;
+    const innerContentElements = showSiblingArticlesList ? (content.filter((contentElement) => {
+      const innerContent = contentElement.key === 'inner-content';
+      return innerContent;
+    })[0].props.children) : null;
+    const blogPostTextElements = showSiblingArticlesList ? (innerContentElements.filter((contentElement) => {
+      const blogPostText = contentElement.key === 'blog-post__text';
+      return blogPostText;
+    })[0].props.text) : null;
+    if (showSiblingArticlesList && (blogPostTextElements || (content && this.props.nextArticleLink))) {
+      blogPostTextElements.splice(this.props.articleListPosition, 0, siblingArticlesList);
+      content.splice(content.length - 1, 0, this.props.nextArticleLink);
+    }
+  }
+
   render() {
-    /* eslint-enable complexity */
     const { flyTitle, showSiblingArticlesList, sectionName } = this.props;
     const elementClassName = showSiblingArticlesList && sectionName ? slug(sectionName, { lower: true }) : null;
-    const siblingArticles = showSiblingArticlesList && this.props.issueSiblings ?
-      this.props.issueSiblings.entries : null;
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -287,27 +309,13 @@ export default class BlogPost extends React.Component {
         {sectionName}
       </span>
     ) : null;
-    const siblingArticlesList = showSiblingArticlesList ? (
-      siblingList(
-        siblingArticles,
-        flyTitle,
-        elementClassName,
-        sectionName,
-        this.props.sideText
-      )
-    ) : null;
-    const innerContentElements = showSiblingArticlesList ? (content.filter((contentElement) => {
-      const innerContent = contentElement.key === 'inner-content';
-      return innerContent;
-    })[0].props.children) : null;
-    const blogPostTextElements = showSiblingArticlesList ? (innerContentElements.filter((contentElement) => {
-      const blogPostText = contentElement.key === 'blog-post__text';
-      return blogPostText;
-    })[0].props.text) : null;
-    if (showSiblingArticlesList && (blogPostTextElements || (content && this.props.nextArticleLink))) {
-      blogPostTextElements.splice(1, 0, siblingArticlesList);
-      content.splice(content.length - 1, 0, this.props.nextArticleLink);
-    }
+    this.addSiblingsList(
+      showSiblingArticlesList,
+      flyTitle,
+      sectionName,
+      elementClassName,
+      content
+    );
     return (
       <article
         itemScope

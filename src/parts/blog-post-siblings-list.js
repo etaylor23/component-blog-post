@@ -12,7 +12,6 @@ export function siblingList(
     return null;
   }
   const blogSideText = sideText ? sideText : `More in this ${ sectionName.toLowerCase() }:`;
-  /* eslint-disable quotes*/
   return (
     <div className={`blog-post__${ elementClassName }-aside`} key="blog-post__siblings-list">
       <span className="blog-post__side-flytitle">{flyTitle}</span>
@@ -37,5 +36,14 @@ export function siblingList(
       </ul>
     </div>
   );
-  /* eslint-enable quotes */
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  siblingList.propTypes = {
+    articlesList: React.PropTypes.arrayOf(React.PropTypes.node),
+    flyTitle: React.PropTypes.string,
+    elementClassName: React.PropTypes.string,
+    sectionName: React.PropTypes.string,
+    sideText: React.PropTypes.string,
+  };
 }
