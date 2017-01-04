@@ -59,10 +59,7 @@ export default class BlogPost extends React.Component {
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
       sectionName: React.PropTypes.string,
-      issueSiblings: React.PropTypes.objectOf(React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.array,
-      ])),
+      issueSiblingsList: React.PropTypes.arrayOf(React.PropTypes.object),
       showSiblingArticlesList: React.PropTypes.bool,
       sideText: React.PropTypes.string,
       nextArticleLink: React.PropTypes.node,
@@ -199,15 +196,15 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
-  addSiblingsList(showSiblingArticlesList, flyTitle, sectionName, elementClassName, content) {
-    const siblingArticles = showSiblingArticlesList && this.props.issueSiblings ?
-    this.props.issueSiblings.entries : null;
+  addSiblingsList(showSiblingArticlesList, flyTitle, siblingsListTitle, elementClassName, content) {
+    const siblingArticles = showSiblingArticlesList && this.props.issueSiblingsList ?
+    this.props.issueSiblingsList : null;
     const siblingArticlesList = showSiblingArticlesList ? (
       siblingList(
         siblingArticles,
         flyTitle,
         elementClassName,
-        sectionName,
+        siblingsListTitle,
         this.props.sideText
       )
     ) : null;
@@ -226,9 +223,10 @@ export default class BlogPost extends React.Component {
   }
 
   render() {
-    const { flyTitle, showSiblingArticlesList, sectionName } = this.props;
+    const { flyTitle, showSiblingArticlesList } = this.props;
+    const siblingsListTitle = this.props.sectionName;
     const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
-      `blog-post__siblings-list--${ this.props.classNameModifier }` : null;
+      `blog-post__siblings-list--${ this.props.classNameModifier }` : '';
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -307,13 +305,13 @@ export default class BlogPost extends React.Component {
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
       <span className={`blog-post__siblings-list-header ${ elementClassName }`}>
-        {sectionName}
+        {siblingsListTitle}
       </span>
     ) : null;
     this.addSiblingsList(
       showSiblingArticlesList,
       flyTitle,
-      sectionName,
+      siblingsListTitle,
       elementClassName,
       content
     );

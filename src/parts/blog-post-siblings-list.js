@@ -5,13 +5,13 @@ export function siblingList(
   articlesList,
   flyTitle,
   elementClassName,
-  sectionName,
+  siblingsListTitle,
   sideText
 ) {
   if (!articlesList) {
     return null;
   }
-  const blogSideText = sideText ? sideText : `More in this ${ sectionName.toLowerCase() }:`;
+  const blogSideText = sideText ? sideText : `More in this ${ siblingsListTitle.toLowerCase() }:`;
   return (
     <div className={`blog-post__siblings-list-aside ${ elementClassName }`} key="blog-post__siblings-list">
       <span className="blog-post__side-flytitle">{flyTitle}</span>
@@ -49,7 +49,7 @@ if (process.env.NODE_ENV !== 'production') {
     articlesList: React.PropTypes.arrayOf(React.PropTypes.node),
     flyTitle: React.PropTypes.string,
     elementClassName: React.PropTypes.string,
-    sectionName: React.PropTypes.string,
+    siblingsListTitle: React.PropTypes.string,
     sideText: React.PropTypes.string,
   };
 }

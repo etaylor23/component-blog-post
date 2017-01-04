@@ -29,7 +29,7 @@ const requiredProps = {
   commentsUri: 'http://google.com',
   viewCommentsLabel: 'foo',
   commentStatus: 'readwrite',
-  issueSiblings: {entries: [{key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'}]},
+  issueSiblingsList: [{key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'}],
   elementClassName: 'blog-post__classname',
   sectionName: 'Section name',
   TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
@@ -47,13 +47,11 @@ const otherProps = {
   commentsUri: 'http://google.com',
   viewCommentsLabel: 'foo',
   commentStatus: 'readwrite',
-  issueSiblings: {
-    entries: [
-      {key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'},
-      {key: '2', flyTitle: 'flytitle2', title: 'title2', webURL: 'www.2.com'},
-      {key: '3', flyTitle: 'flytitle3', title: 'title3', webURL: 'www.3.com'},
-    ]
-  },
+  issueSiblingsList: [
+    {key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'},
+    {key: '2', flyTitle: 'flytitle2', title: 'title2', webURL: 'www.2.com'},
+    {key: '3', flyTitle: 'flytitle3', title: 'title3', webURL: 'www.3.com'},
+  ],
   showSiblingArticlesList: true,
   elementClassName: 'blog-post__classname',
   sectionName: 'Special report',
@@ -118,8 +116,8 @@ describe('BlogPost', () => {
     });
 
     it('renders a list of siblings', () => {
-      post.find('.blog-post__special-report-list').should.have.exactly(3).descendants('.blog-post__special-report-article');
-      post.find('.blog-post__special-report-list').should.have.tagName('ul');
+      post.find('.blog-post__siblings-list').should.have.exactly(3).descendants('.blog-post__siblings-list-article');
+      post.find('.blog-post__siblings-list').should.have.tagName('ul');
     });
   });
 
