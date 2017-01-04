@@ -13,6 +13,7 @@
   --slim-max-width: 290px;
   --slim-margin: 30px;
   --slim-margin-top: 8px;
+  --bullet-point-arrow: url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgogIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0iI2UzMTIwYiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDggNDg7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KICAgPHBvbHlnb24gcG9pbnRzPSIxNy42LDE0LjggMjAuNCwxMiAzMi40LDI0IDIwLjQsMzYgMTcuNiwzMy4yIDI2LjcsMjQgCSIvPgo8L3N2Zz4K');
 }
 
 @custom-media --blog-post-small-layout screen and (width >= 690px);
@@ -191,7 +192,6 @@
 .blog-post-article-image__slim {
   max-width: var(--slim-max-width);
 }
-
 
 @media (--blog-post-small-layout) {
   .blog-post__inline-image--generic {

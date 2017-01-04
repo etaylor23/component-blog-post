@@ -7,6 +7,7 @@ import React from 'react';
 import Rubric from './parts/rubric';
 import ShareBar from './parts/blog-post-sharebar';
 import Text from './parts/text';
+import { siblingList } from './parts/blog-post-siblings-list';
 
 import classnames from 'classnames';
 import urlJoin from 'url-join';
@@ -57,6 +58,13 @@ export default class BlogPost extends React.Component {
       viewCommentsLabel: React.PropTypes.string.isRequired,
       commentsUri: React.PropTypes.string.isRequired,
       blogImage: React.PropTypes.object,
+      sectionName: React.PropTypes.string,
+      issueSiblingsList: React.PropTypes.arrayOf(React.PropTypes.object),
+      showSiblingArticlesList: React.PropTypes.bool,
+      sideText: React.PropTypes.string,
+      nextArticleLink: React.PropTypes.node,
+      articleListPosition: React.PropTypes.number,
+      classNameModifier: React.PropTypes.string,
     };
   }
   static get defaultProps() {
@@ -188,7 +196,37 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
+  addSiblingsList(showSiblingArticlesList, flyTitle, siblingsListTitle, elementClassName, content) {
+    const siblingArticles = showSiblingArticlesList && this.props.issueSiblingsList ?
+    this.props.issueSiblingsList : null;
+    const siblingArticlesList = showSiblingArticlesList ? (
+      siblingList(
+        siblingArticles,
+        flyTitle,
+        elementClassName,
+        siblingsListTitle,
+        this.props.sideText
+      )
+    ) : null;
+    const innerContentElements = showSiblingArticlesList ? (content.filter((contentElement) => {
+      const innerContent = contentElement.key === 'inner-content';
+      return innerContent;
+    })[0].props.children) : null;
+    const blogPostTextElements = showSiblingArticlesList ? (innerContentElements.filter((contentElement) => {
+      const blogPostText = contentElement.key === 'blog-post__text';
+      return blogPostText;
+    })[0].props.text) : null;
+    if (showSiblingArticlesList && (blogPostTextElements || (content && this.props.nextArticleLink))) {
+      blogPostTextElements.splice(this.props.articleListPosition, 0, siblingArticlesList);
+      content.splice(content.length - 1, 0, this.props.nextArticleLink);
+    }
+  }
+
   render() {
+    const { flyTitle, showSiblingArticlesList } = this.props;
+    const siblingsListTitle = this.props.sectionName;
+    const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
+      `blog-post__siblings-list--${ this.props.classNameModifier }` : '';
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
@@ -265,6 +303,18 @@ export default class BlogPost extends React.Component {
       </div>
     );
     const TitleComponent = this.props.TitleComponent;
+    const articleHeader = showSiblingArticlesList ? (
+      <span className={`blog-post__siblings-list-header ${ elementClassName }`}>
+        {siblingsListTitle}
+      </span>
+    ) : null;
+    this.addSiblingsList(
+      showSiblingArticlesList,
+      flyTitle,
+      siblingsListTitle,
+      elementClassName,
+      content
+    );
     return (
       <article
         itemScope
@@ -274,7 +324,16 @@ export default class BlogPost extends React.Component {
         role="article"
         ref="article"
       >
-        <TitleComponent title={this.props.title} flyTitle={this.props.flyTitle} Heading={"h1"} />
+        {articleHeader}
+        <TitleComponent
+          title={this.props.title}
+          flyTitle={this.props.flyTitle}
+          Heading={"h1"}
+          titleClassName={showSiblingArticlesList ?
+            `flytitle-and-title__siblings-list-title ${ elementClassName }` : ''}
+          flyTitleClassName={showSiblingArticlesList ?
+            `flytitle-and-title__siblings-list-flytitle ${ elementClassName }` : ''}
+        />
         {content}
       </article>
     );
