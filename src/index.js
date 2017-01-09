@@ -65,6 +65,7 @@ export default class BlogPost extends React.Component {
       nextArticleLink: React.PropTypes.node,
       articleListPosition: React.PropTypes.number,
       classNameModifier: React.PropTypes.string,
+      siblingListSideTitle: React.PropTypes.string,
     };
   }
   static get defaultProps() {
@@ -196,18 +197,29 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
-  addSiblingsList(showSiblingArticlesList, flyTitle, siblingsListTitle, elementClassName, content) {
-    const siblingArticles = showSiblingArticlesList && this.props.issueSiblingsList ?
-    this.props.issueSiblingsList : null;
-    const siblingArticlesList = showSiblingArticlesList ? (
-      siblingList(
-        siblingArticles,
-        flyTitle,
-        elementClassName,
-        siblingsListTitle,
-        this.props.sideText
-      )
-    ) : null;
+  addSiblingsList(siblingListProps) {
+    const {
+      showSiblingArticlesList,
+      flyTitle,
+      siblingsListTitle,
+      elementClassName,
+      content,
+      issueSiblingsList,
+      articleListPosition,
+      nextArticleLink,
+    } = siblingListProps;
+    const siblingArticles = showSiblingArticlesList && issueSiblingsList ?
+    issueSiblingsList : null;
+    const { sideText, siblingListSideTitle } = this.props;
+    const siblingListData = {
+      siblingArticles,
+      flyTitle,
+      elementClassName,
+      siblingsListTitle,
+      sideText,
+      siblingListSideTitle,
+    };
+    const siblingArticlesList = showSiblingArticlesList ? siblingList(siblingListData) : null;
     const innerContentElements = showSiblingArticlesList ? (content.filter((contentElement) => {
       const innerContent = contentElement.key === 'inner-content';
       return innerContent;
@@ -216,14 +228,29 @@ export default class BlogPost extends React.Component {
       const blogPostText = contentElement.key === 'blog-post__text';
       return blogPostText;
     })[0].props.text) : null;
-    if (showSiblingArticlesList && (blogPostTextElements || (content && this.props.nextArticleLink))) {
-      blogPostTextElements.splice(this.props.articleListPosition, 0, siblingArticlesList);
-      content.splice(content.length - 1, 0, this.props.nextArticleLink);
+    if (showSiblingArticlesList && (blogPostTextElements || (content && nextArticleLink))) {
+      blogPostTextElements.splice(articleListPosition, 0, siblingArticlesList);
+      content.splice(content.length - 1, 0, nextArticleLink);
     }
   }
 
+  generateBlogPostFlyTitle(siblingListTitle, flyTitle) {
+    let blogFlyTitle = flyTitle;
+    if (this.props.showSiblingArticlesList && siblingListTitle !== flyTitle) {
+      blogFlyTitle = `${ siblingListTitle }: ${ flyTitle }`;
+    }
+    return blogFlyTitle;
+  }
+
   render() {
-    const { flyTitle, showSiblingArticlesList } = this.props;
+    const {
+      flyTitle,
+      showSiblingArticlesList,
+      siblingListSideTitle,
+      issueSiblingsList,
+      articleListPosition,
+      nextArticleLink,
+    } = this.props;
     const siblingsListTitle = this.props.sectionName;
     const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
       `blog-post__siblings-list--${ this.props.classNameModifier }` : '';
@@ -302,19 +329,24 @@ export default class BlogPost extends React.Component {
         {commentSection}
       </div>
     );
+
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
       <span className={`blog-post__siblings-list-header ${ elementClassName }`}>
         {siblingsListTitle}
       </span>
     ) : null;
-    this.addSiblingsList(
+    const siblingListProps = {
       showSiblingArticlesList,
       flyTitle,
       siblingsListTitle,
       elementClassName,
-      content
-    );
+      content,
+      issueSiblingsList,
+      articleListPosition,
+      nextArticleLink,
+    };
+    this.addSiblingsList(siblingListProps);
     return (
       <article
         itemScope
@@ -327,7 +359,7 @@ export default class BlogPost extends React.Component {
         {articleHeader}
         <TitleComponent
           title={this.props.title}
-          flyTitle={this.props.flyTitle}
+          flyTitle={this.generateBlogPostFlyTitle(siblingListSideTitle, flyTitle)}
           Heading={"h1"}
           titleClassName={showSiblingArticlesList ?
             `flytitle-and-title__siblings-list-title ${ elementClassName }` : ''}
