@@ -16,6 +16,18 @@ function twoDigits(int) {
   return int > 9 ? '' + int : '0' + int; // eslint-disable-line
 }
 
+export function generateBlogPostFlyTitle(
+  showSiblingArticlesList,
+  siblingListTitle,
+  flyTitle
+) {
+  let blogFlyTitle = flyTitle;
+  if (showSiblingArticlesList && siblingListTitle !== flyTitle) {
+    blogFlyTitle = `${ siblingListTitle }: ${ flyTitle }`;
+  }
+  return blogFlyTitle;
+}
+
 export default class BlogPost extends React.Component {
   static get propTypes() {
     return {
@@ -234,14 +246,6 @@ export default class BlogPost extends React.Component {
     }
   }
 
-  generateBlogPostFlyTitle(siblingListTitle, flyTitle) {
-    let blogFlyTitle = flyTitle;
-    if (this.props.showSiblingArticlesList && siblingListTitle !== flyTitle) {
-      blogFlyTitle = `${ siblingListTitle }: ${ flyTitle }`;
-    }
-    return blogFlyTitle;
-  }
-
   render() {
     const {
       flyTitle,
@@ -359,7 +363,7 @@ export default class BlogPost extends React.Component {
         {articleHeader}
         <TitleComponent
           title={this.props.title}
-          flyTitle={this.generateBlogPostFlyTitle(siblingListSideTitle, flyTitle)}
+          flyTitle={generateBlogPostFlyTitle(showSiblingArticlesList, siblingListSideTitle, flyTitle)}
           Heading={"h1"}
           titleClassName={showSiblingArticlesList ?
             `flytitle-and-title__siblings-list-title ${ elementClassName }` : ''}

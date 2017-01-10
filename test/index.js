@@ -1,6 +1,6 @@
 /* eslint-disable */
 import 'babel-polyfill';
-import BlogPost from '../src';
+import BlogPost, { generateBlogPostFlyTitle } from '../src';
 import MobileDetect from 'mobile-detect';
 import React from 'react';
 import chai from 'chai';
@@ -119,6 +119,18 @@ describe('BlogPost', () => {
       post.find('.blog-post__siblings-list').should.have.exactly(3).descendants('.blog-post__siblings-list-article');
       post.find('.blog-post__siblings-list').should.have.tagName('ul');
     });
+  });
+
+  describe('Generate blog post flyTitle', () => {
+    it('should generate just the report title if flytitle is the same', () => {
+      const blogPostFlyTitle = generateBlogPostFlyTitle(true, "report title", "report title");
+      blogPostFlyTitle.should.equal("report title");
+    });
+
+    it('should return the report title and flyTitle if they are different', () => {
+      const blogPostFlyTitle = generateBlogPostFlyTitle(true, "report title", "flyTitle");
+      blogPostFlyTitle.should.equal("report title: flyTitle");
+    })
   });
 
   describe('Comments', () => {
