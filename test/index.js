@@ -62,7 +62,7 @@ const otherProps = {
     "paragraph 2 paragraph 2 paragraph 2",
     "paragraph 3 paragraph 3 paragraph 3",
     "paragraph 4 paragraph 4 paragraph 4",
-  ]
+  ],
 }
 
 const mountComponentWithProps = mountComponent(requiredProps);
