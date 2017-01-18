@@ -247,6 +247,31 @@ export default class BlogPost extends React.Component {
     }
   }
 
+  generateWrappedInnerContent(asideableContent) {
+    let wrappedInnerContent = [];
+    wrappedInnerContent = this.addImage(wrappedInnerContent, this.props.image);
+    if (asideableContent.length) {
+      wrappedInnerContent.push((
+        <div className="blog-post__asideable-wrapper" key="asideable-content"
+          ref="asideable"
+        >
+          <div className="blog-post__asideable-content blog-post__asideable-content--meta">
+            {asideableContent}
+          </div>
+        </div>
+      ));
+    }
+    if (this.props.author) {
+      wrappedInnerContent.push(<Author key="blog-post__author" author={this.props.author} />);
+    }
+    wrappedInnerContent.push(<Text text={this.props.text} key="blog-post__text" />);
+    wrappedInnerContent.push(<div key="blog-post__after-text">{this.props.afterText}</div>);
+    if (this.props.articleFootNote) {
+      wrappedInnerContent.push(this.props.articleFootNote);
+    }
+    return wrappedInnerContent;
+  }
+
   render() {
     const {
       flyTitle,
@@ -262,7 +287,6 @@ export default class BlogPost extends React.Component {
     let content = [];
     // aside and text content are wrapped together into a component.
     // that makes it easier to move the aside around relatively to its containter
-    let wrappedInnerContent = [];
     const asideableContent = [];
     let sectionDateAuthor = [];
     content = this.addRubric(content, this.props.rubric);
@@ -297,24 +321,7 @@ export default class BlogPost extends React.Component {
     asideableContent.push(
       shareBarDefault
     );
-    wrappedInnerContent = this.addImage(wrappedInnerContent, this.props.image);
-    if (asideableContent.length) {
-      wrappedInnerContent.push((
-        <div className="blog-post__asideable-wrapper" key="asideable-content"
-          ref="asideable"
-        >
-          <div className="blog-post__asideable-content blog-post__asideable-content--meta">
-            {asideableContent}
-          </div>
-        </div>
-      ));
-    }
-    if (this.props.author) {
-      wrappedInnerContent.push(<Author key="blog-post__author" author={this.props.author} />);
-    }
-    wrappedInnerContent.push(<Text text={this.props.text} key="blog-post__text" />);
-    wrappedInnerContent.push(<div key="blog-post__after-text">{this.props.afterText}</div>);
-    wrappedInnerContent.push(this.props.articleFootNote);
+    const wrappedInnerContent = this.generateWrappedInnerContent(asideableContent);
     content.push(<div className="blog-post__inner" key="inner-content">{wrappedInnerContent}</div>);
     const { commentCount, commentStatus } = this.props;
     let commentSection = null;
