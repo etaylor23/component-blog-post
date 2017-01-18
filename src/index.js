@@ -75,6 +75,7 @@ export default class BlogPost extends React.Component {
       showSiblingArticlesList: React.PropTypes.bool,
       sideText: React.PropTypes.string,
       nextArticleLink: React.PropTypes.node,
+      articleFootNote: React.PropTypes.node,
       articleListPosition: React.PropTypes.number,
       classNameModifier: React.PropTypes.string,
       siblingListSideTitle: React.PropTypes.string,
@@ -313,6 +314,7 @@ export default class BlogPost extends React.Component {
     }
     wrappedInnerContent.push(<Text text={this.props.text} key="blog-post__text" />);
     wrappedInnerContent.push(<div key="blog-post__after-text">{this.props.afterText}</div>);
+    wrappedInnerContent.push(this.props.articleFootNote);
     content.push(<div className="blog-post__inner" key="inner-content">{wrappedInnerContent}</div>);
     const { commentCount, commentStatus } = this.props;
     let commentSection = null;
