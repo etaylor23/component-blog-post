@@ -223,7 +223,7 @@ export default class BlogPost extends React.Component {
     } = siblingListProps;
     const siblingArticles = showSiblingArticlesList && issueSiblingsList ?
     issueSiblingsList : null;
-    const { sideText, siblingListSideTitle } = this.props;
+    const { sideText, siblingListSideTitle, articleFootNote } = this.props;
     const siblingListData = {
       siblingArticles,
       flyTitle,
@@ -233,17 +233,21 @@ export default class BlogPost extends React.Component {
       siblingListSideTitle,
     };
     const siblingArticlesList = showSiblingArticlesList ? siblingList(siblingListData) : null;
-    const innerContentElements = showSiblingArticlesList ? (content.filter((contentElement) => {
+    const innerContentElements = showSiblingArticlesList || articleFootNote ? (content.filter((contentElement) => {
       const innerContent = contentElement.key === 'inner-content';
       return innerContent;
     })[0].props.children) : null;
-    const blogPostTextElements = showSiblingArticlesList ? (innerContentElements.filter((contentElement) => {
-      const blogPostText = contentElement.key === 'blog-post__text';
-      return blogPostText;
-    })[0].props.text) : null;
+    const blogPostTextElements = showSiblingArticlesList || articleFootNote ?
+      (innerContentElements.filter((contentElement) => {
+        const blogPostText = contentElement.key === 'blog-post__text';
+        return blogPostText;
+      })[0].props.text) : null;
     if (showSiblingArticlesList && (blogPostTextElements || (content && nextArticleLink))) {
       blogPostTextElements.splice(articleListPosition, 0, siblingArticlesList);
       content.splice(content.length - 1, 0, nextArticleLink);
+    }
+    if (articleFootNote) {
+      blogPostTextElements.splice(blogPostTextElements.length - 1, 0, articleFootNote);
     }
   }
 
@@ -266,9 +270,6 @@ export default class BlogPost extends React.Component {
     }
     wrappedInnerContent.push(<Text text={this.props.text} key="blog-post__text" />);
     wrappedInnerContent.push(<div key="blog-post__after-text">{this.props.afterText}</div>);
-    if (this.props.articleFootNote) {
-      wrappedInnerContent.push(this.props.articleFootNote);
-    }
     return wrappedInnerContent;
   }
 
