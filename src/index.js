@@ -79,6 +79,7 @@ export default class BlogPost extends React.Component {
       articleListPosition: React.PropTypes.number,
       classNameModifier: React.PropTypes.string,
       siblingListSideTitle: React.PropTypes.string,
+      printEdition: React.PropTypes.bool,
     };
   }
   static get defaultProps() {
@@ -210,6 +211,29 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
+  filterBlogPostTextElements(content) {
+    const innerContentElements = content.filter((contentElement) => {
+      const innerContent = contentElement.key === 'inner-content';
+      return innerContent;
+    })[0].props.children;
+    const blogPostTextElements = innerContentElements.filter((contentElement) => {
+      const blogPostText = contentElement.key === 'blog-post__text';
+      return blogPostText;
+    })[0].props.text;
+    return blogPostTextElements;
+  }
+
+  moveBottomMobileAd(content) {
+    const blogPostText = this.filterBlogPostTextElements(content);
+    const numberOfParagraphs = blogPostText.length;
+    const mobileAd = blogPostText[numberOfParagraphs - 1];
+    if (mobileAd) {
+      blogPostText.pop();
+      content.push(mobileAd);
+    }
+  }
+
+
   addSiblingsList(siblingListProps) {
     const {
       showSiblingArticlesList,
@@ -220,6 +244,7 @@ export default class BlogPost extends React.Component {
       issueSiblingsList,
       articleListPosition,
       nextArticleLink,
+      printEdition,
     } = siblingListProps;
     const siblingArticles = showSiblingArticlesList && issueSiblingsList ?
     issueSiblingsList : null;
@@ -233,21 +258,16 @@ export default class BlogPost extends React.Component {
       siblingListSideTitle,
     };
     const siblingArticlesList = showSiblingArticlesList ? siblingList(siblingListData) : null;
-    const innerContentElements = showSiblingArticlesList || articleFootNote ? (content.filter((contentElement) => {
-      const innerContent = contentElement.key === 'inner-content';
-      return innerContent;
-    })[0].props.children) : null;
-    const blogPostTextElements = showSiblingArticlesList || articleFootNote ?
-      (innerContentElements.filter((contentElement) => {
-        const blogPostText = contentElement.key === 'blog-post__text';
-        return blogPostText;
-      })[0].props.text) : null;
+    let blogPostTextElements = null;
+    if (showSiblingArticlesList || articleFootNote) {
+      blogPostTextElements = this.filterBlogPostTextElements(content);
+    }
     if (showSiblingArticlesList && (blogPostTextElements || (content && nextArticleLink))) {
       blogPostTextElements.splice(articleListPosition, 0, siblingArticlesList);
       content.splice(content.length - 1, 0, nextArticleLink);
     }
-    if (articleFootNote) {
-      blogPostTextElements.splice(blogPostTextElements.length - 1, 0, articleFootNote);
+    if (articleFootNote && printEdition) {
+      blogPostTextElements.push(articleFootNote);
     }
   }
 
@@ -281,6 +301,7 @@ export default class BlogPost extends React.Component {
       issueSiblingsList,
       articleListPosition,
       nextArticleLink,
+      printEdition,
     } = this.props;
     const siblingsListTitle = this.props.sectionName;
     const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
@@ -343,6 +364,7 @@ export default class BlogPost extends React.Component {
         {commentSection}
       </div>
     );
+    this.moveBottomMobileAd(content);
 
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
@@ -359,6 +381,7 @@ export default class BlogPost extends React.Component {
       issueSiblingsList,
       articleListPosition,
       nextArticleLink,
+      printEdition,
     };
     this.addSiblingsList(siblingListProps);
     return (
