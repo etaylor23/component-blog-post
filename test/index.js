@@ -20,7 +20,12 @@ function mountComponent(requiredProps) {
 const requiredProps = {
   flyTitle: 'Required flyTitle',
   section: 'Required section',
-  text: 'Required text',
+  text: [
+    "paragraph 1 paragraph 1 paragraph 1",
+    "paragraph 2 paragraph 2 paragraph 2",
+    "paragraph 3 paragraph 3 paragraph 3",
+    "paragraph 4 paragraph 4 paragraph 4",
+  ],
   title: 'Required title',
   type: 'blog',
   id: 'test blog',
@@ -29,7 +34,6 @@ const requiredProps = {
   commentsUri: 'http://google.com',
   viewCommentsLabel: 'foo',
   commentStatus: 'readwrite',
-  issueSiblingsList: [{key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'}],
   elementClassName: 'blog-post__classname',
   sectionName: 'Section name',
   TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
