@@ -5,7 +5,7 @@ import Comments from './parts/comments';
 import ImageCaption from './parts/image-caption';
 import React from 'react';
 import Rubric from './parts/rubric';
-import ShareBar from './parts/blog-post-sharebar';
+import ShareBar, { getIconsPropTypes } from './parts/blog-post-sharebar';
 import Text from './parts/text';
 import { siblingList } from './parts/blog-post-siblings-list';
 
@@ -80,6 +80,9 @@ export default class BlogPost extends React.Component {
       articleListPosition: React.PropTypes.number,
       classNameModifier: React.PropTypes.string,
       siblingListSideTitle: React.PropTypes.string,
+      shareBarDesktopIcons: getIconsPropTypes(),
+      shareBarMobileIcons: getIconsPropTypes(),
+      reuseButton: React.PropTypes.node,
       printEdition: React.PropTypes.bool,
     };
   }
@@ -353,6 +356,8 @@ export default class BlogPost extends React.Component {
         flyTitle={this.props.flyTitle}
         publicationDate={shareBarPublicateDate}
         contentID={this.props.id}
+        desktopIcons={this.props.shareBarDesktopIcons}
+        mobileIcons={this.props.shareBarMobileIcons}
        />);
     asideableContent.push(
       shareBarDefault
@@ -374,8 +379,13 @@ export default class BlogPost extends React.Component {
     }
     content.push(
       <div className="blog-post__bottom-panel" key="blog-post__bottom-panel">
-        {shareBarDefault}
-        {commentSection}
+        <div className="blog-post__bottom-panel-top">
+          {shareBarDefault}
+          {commentSection}
+        </div>
+        <div className="blog-post__bottom-panel-bottom">
+          {this.props.reuseButton}
+        </div>
       </div>
     );
     this.moveBottomMobileAd(content);
