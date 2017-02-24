@@ -9,19 +9,19 @@ import url from 'url';
 export function generateCopyrightUrl(type, title, publicationDate, contentID) {
   let output = 'mailto:rights@economist.com';
   if (contentID) {
-    output = _url2.default.format({
+    output = url.format({
       protocol: 'https:',
       host: 's100.copyright.com',
       pathname: '/AppDispatchServlet',
       query: {
         publisherName: 'economist',
         publication: 'economist',
-        title: title,
-        publicationDate: publicationDate,
-        contentID: contentID,
-        type: type,
-        orderBeanReset: 0
-      }
+        title,
+        publicationDate,
+        contentID,
+        type,
+        orderBeanReset: 0,
+      },
     });
   }
   return output;
