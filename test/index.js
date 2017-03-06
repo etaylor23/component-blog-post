@@ -21,10 +21,10 @@ const requiredProps = {
   flyTitle: 'Required flyTitle',
   section: 'Required section',
   text: [
-    "paragraph 1 paragraph 1 paragraph 1",
-    "paragraph 2 paragraph 2 paragraph 2",
-    "paragraph 3 paragraph 3 paragraph 3",
-    "paragraph 4 paragraph 4 paragraph 4",
+    "paragraph 1",
+    "paragraph 2",
+    "paragraph 3",
+    "paragraph 4",
   ],
   title: 'Required title',
   type: 'blog',
@@ -44,10 +44,10 @@ const otherProps = {
   flyTitle: 'Other flyTitle',
   section: 'Other section',
   text: [
-    "paragraph 1 paragraph 1 paragraph 1",
-    "paragraph 2 paragraph 2 paragraph 2",
-    "paragraph 3 paragraph 3 paragraph 3",
-    "paragraph 4 paragraph 4 paragraph 4",
+    "paragraph 1",
+    "paragraph 2",
+    "paragraph 3",
+    "paragraph 4",
   ],
   title: 'Other title',
   type: 'blog',
@@ -100,7 +100,7 @@ describe('BlogPost', () => {
 
     it('renders a text', () => {
       post.should.have.exactly(1).descendants('.blog-post__text');
-      post.find('.blog-post__text').should.have.text(requiredProps.text);
+      post.find('.blog-post__text').should.have.text('paragraph 1paragraph 2paragraph 3paragraph 4');
     });
 
     it('renders the section name', () => {
