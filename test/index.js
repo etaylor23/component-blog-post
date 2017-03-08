@@ -223,6 +223,24 @@ describe('BlogPost', () => {
     post.find('.blog-post__text').should.have.exactly(1).descendants('.foo');
   });
 
+  it('moves the last inline out outside the text content and not the last paragraph', () => {
+    const text = [
+      <div key="1" className="paragraph">paragraph 1</div>,
+      <div key="2" className="inline-ad">inline advert 1</div>,
+      <div key="3" className="paragraph">paragraph 2</div>,
+      <div key="4" className="inline-ad">inline advert 2</div>
+    ]
+    const blogPostText = mountComponentWithProps({ text: text }).find('.blog-post__text');
+    blogPostText.should.have.exactly(2).descendants('.paragraph');
+    blogPostText.contains(
+      <div key="2" className="inline-ad">inline advert 1</div>
+    ).should.equal(true);
+    blogPostText.contains(
+      <div key="4" className="inline-ad">inline advert 2</div>
+    ).should.equal(false);
+  });
+
+
   it('renders an image', () => {
     const image = {
       src: '//cdn.static-economist.com/sites/all/themes/econfinal/images/svg/logo.svg',
