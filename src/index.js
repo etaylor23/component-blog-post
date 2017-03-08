@@ -242,12 +242,29 @@ export default class BlogPost extends React.Component {
     return blogPostTextElements;
   }
 
+  filterLastInlineAd(blogPostText) {
+    const regex = /inline-ad/;
+    const inlineAdIndexes = [];
+    if (blogPostText.constructor !== Array) {
+      return null;
+    }
+    blogPostText.forEach((element, i) => {
+      const className = element && element.props ? element.props.className : null;
+      if (className && className.match(regex)) {
+        inlineAdIndexes.push(i);
+      }
+      return i;
+    });
+    return inlineAdIndexes;
+  }
+
   moveBottomMobileAd(content) {
     const blogPostText = this.filterBlogPostTextElements(content);
-    const numberOfParagraphs = blogPostText.length;
-    const mobileAd = blogPostText[numberOfParagraphs - 1];
-    if (mobileAd) {
-      blogPostText.pop();
+    const inlineAdIndexes = blogPostText ? this.filterLastInlineAd(blogPostText) : null;
+    const lastInlineAdIndex = inlineAdIndexes ? inlineAdIndexes[inlineAdIndexes.length - 1] : null;
+    const mobileAd = lastInlineAdIndex ? blogPostText[lastInlineAdIndex] : null;
+    if (lastInlineAdIndex && mobileAd) {
+      blogPostText.splice(lastInlineAdIndex, 1);
       content.push(mobileAd);
     }
   }

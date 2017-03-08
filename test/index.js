@@ -21,10 +21,10 @@ const requiredProps = {
   flyTitle: 'Required flyTitle',
   section: 'Required section',
   text: [
-    "paragraph 1 paragraph 1 paragraph 1",
-    "paragraph 2 paragraph 2 paragraph 2",
-    "paragraph 3 paragraph 3 paragraph 3",
-    "paragraph 4 paragraph 4 paragraph 4",
+    "paragraph 1",
+    "paragraph 2",
+    "paragraph 3",
+    "paragraph 4",
   ],
   title: 'Required title',
   type: 'blog',
@@ -44,10 +44,10 @@ const otherProps = {
   flyTitle: 'Other flyTitle',
   section: 'Other section',
   text: [
-    "paragraph 1 paragraph 1 paragraph 1",
-    "paragraph 2 paragraph 2 paragraph 2",
-    "paragraph 3 paragraph 3 paragraph 3",
-    "paragraph 4 paragraph 4 paragraph 4",
+    "paragraph 1",
+    "paragraph 2",
+    "paragraph 3",
+    "paragraph 4",
   ],
   title: 'Other title',
   type: 'blog',
@@ -100,7 +100,7 @@ describe('BlogPost', () => {
 
     it('renders a text', () => {
       post.should.have.exactly(1).descendants('.blog-post__text');
-      post.find('.blog-post__text').should.have.text(requiredProps.text);
+      post.find('.blog-post__text').should.have.text('paragraph 1paragraph 2paragraph 3paragraph 4');
     });
 
     it('renders the section name', () => {
@@ -222,6 +222,24 @@ describe('BlogPost', () => {
     const post = mountComponentWithProps({ text: <div className="foo" /> });
     post.find('.blog-post__text').should.have.exactly(1).descendants('.foo');
   });
+
+  it('moves the last inline out outside the text content and not the last paragraph', () => {
+    const text = [
+      <div key="1" className="paragraph">paragraph 1</div>,
+      <div key="2" className="inline-ad">inline advert 1</div>,
+      <div key="3" className="paragraph">paragraph 2</div>,
+      <div key="4" className="inline-ad">inline advert 2</div>
+    ]
+    const blogPostText = mountComponentWithProps({ text: text }).find('.blog-post__text');
+    blogPostText.should.have.exactly(2).descendants('.paragraph');
+    blogPostText.contains(
+      <div key="2" className="inline-ad">inline advert 1</div>
+    ).should.equal(true);
+    blogPostText.contains(
+      <div key="4" className="inline-ad">inline advert 2</div>
+    ).should.equal(false);
+  });
+
 
   it('renders an image', () => {
     const image = {
