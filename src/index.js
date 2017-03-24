@@ -232,13 +232,13 @@ export default class BlogPost extends React.Component {
 
   filterBlogPostTextElements(content) {
     const innerContentElements = content.filter((contentElement) => {
-      const innerContent = contentElement.key === 'inner-content';
+      const innerContent = contentElement ? contentElement.key === 'inner-content' : null;
       return innerContent;
     })[0].props.children;
-    const blogPostTextElements = innerContentElements.filter((contentElement) => {
-      const blogPostText = contentElement.key === 'blog-post__text';
+    const blogPostTextElements = innerContentElements ? (innerContentElements.filter((contentElement) => {
+      const blogPostText = contentElement ? contentElement.key === 'blog-post__text' : null;
       return blogPostText;
-    })[0].props.text;
+    })[0].props.text) : null;
     return blogPostTextElements;
   }
 
