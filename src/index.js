@@ -22,7 +22,7 @@ export function generateBlogPostFlyTitle(
   flyTitle
 ) {
   let blogFlyTitle = flyTitle;
-  if (showSiblingArticlesList && siblingListTitle !== flyTitle) {
+  if (siblingListTitle && showSiblingArticlesList && siblingListTitle !== flyTitle) {
     blogFlyTitle = `${ siblingListTitle }: ${ flyTitle }`;
   }
   return blogFlyTitle;
