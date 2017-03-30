@@ -305,7 +305,6 @@ export default class BlogPost extends React.Component {
       issueSiblingsList,
       articleListPosition,
       nextArticleLink,
-      printEdition,
     } = siblingListProps;
     if (!issueSiblingsList || !showSiblingArticlesList) {
       return;
@@ -330,7 +329,12 @@ export default class BlogPost extends React.Component {
       blogPostTextElements.splice(articleListPosition, 0, siblingArticlesList);
       content.splice(content.length - 1, 0, nextArticleLink);
     }
-    if (articleFootNote && printEdition) {
+  }
+
+  addArticleFootNote(content, articleFootNote) {
+    let blogPostTextElements = null;
+    if (articleFootNote) {
+      blogPostTextElements = this.filterBlogPostTextElements(content);
       blogPostTextElements.push(articleFootNote);
     }
   }
@@ -400,6 +404,7 @@ export default class BlogPost extends React.Component {
       printEdition,
       secondaryList,
       secondaryListPosition,
+      articleFootNote,
     } = this.props;
     const siblingsListTitle = this.props.sectionName;
     const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
@@ -457,6 +462,9 @@ export default class BlogPost extends React.Component {
       </div>
     );
     this.moveBottomMobileAd(content);
+    if (printEdition && articleFootNote) {
+      this.addArticleFootNote(content, articleFootNote);
+    }
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
       <span className={`blog-post__siblings-list-header ${ elementClassName }`}>

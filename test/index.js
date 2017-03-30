@@ -8,6 +8,7 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import chaiEnzyme from 'chai-enzyme';
 import { mount } from 'enzyme';
+import createFragment from 'react-addons-create-fragment'
 chai.use(chaiEnzyme()).should();
 chai.use(sinonChai);
 
@@ -69,8 +70,33 @@ const otherProps = {
   TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
 }
 
+const moreProps = {
+  flyTitle: 'Required flyTitle',
+  section: 'Required section',
+  text: [
+    createFragment({children: ['paragraph1']}),
+    createFragment({children: ['paragraph2']}),
+    createFragment({children: ['paragraph3']}),
+  ],
+  title: 'Required title',
+  type: 'blog',
+  id: 'test blog',
+  publicationDate: '01/02/03',
+  commentCount: 10,
+  commentsUri: 'http://google.com',
+  viewCommentsLabel: 'foo',
+  commentStatus: 'readwrite',
+  elementClassName: 'blog-post__classname',
+  sectionName: 'Section name',
+  secondaryListModifier: 'modifier',
+  TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
+  articleFootNote: (<div className='articleFootNote'>articleFootNote</div>),
+  printEdition: true,
+}
+
 const mountComponentWithProps = mountComponent(requiredProps);
 const mountComponentWithOtherProps = mountComponent(otherProps)
+const mountComponentWithMoreProps = mountComponent(moreProps)
 describe('BlogPost', () => {
   it('is compatible with React.Component', () => {
     BlogPost.should.be.a('function')
@@ -105,6 +131,11 @@ describe('BlogPost', () => {
 
     it('renders the section name', () => {
       post.find('.blog-post__section').should.have.text(requiredProps.section);
+    });
+
+    it('should render a footnote if provided', () => {
+      const blog = mountComponentWithMoreProps();
+      blog.find('.blog-post__text').should.have.exactly(1).descendants('.articleFootNote');
     });
 
   });
