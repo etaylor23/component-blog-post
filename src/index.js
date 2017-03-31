@@ -258,8 +258,7 @@ export default class BlogPost extends React.Component {
     return inlineAdIndexes;
   }
 
-  moveBottomMobileAd(content) {
-    const blogPostText = this.filterBlogPostTextElements(content);
+  moveBottomMobileAd(content, blogPostText) {
     const inlineAdIndexes = blogPostText ? this.filterLastInlineAd(blogPostText) : null;
     const lastInlineAdIndex = inlineAdIndexes ? inlineAdIndexes[inlineAdIndexes.length - 1] : null;
     const mobileAd = lastInlineAdIndex ? blogPostText[lastInlineAdIndex] : null;
@@ -272,17 +271,16 @@ export default class BlogPost extends React.Component {
   addSecondaryList(
     secondaryList,
     secondaryListPosition,
-    content,
-    showSiblingArticlesList
+    showSiblingArticlesList,
+    blogPostText
   ) {
     if (!secondaryList) {
       return null;
     }
-    const blogPostTextElements = this.filterBlogPostTextElements(content);
     /* eslint-disable arrow-body-style */
     let isEnoughParagraphs = null;
-    if (typeof blogPostTextElements[0] === 'object') {
-      isEnoughParagraphs = blogPostTextElements.find((element) => {
+    if (typeof blogPostText[0] === 'object') {
+      isEnoughParagraphs = blogPostText.find((element) => {
         /* eslint-enable arrow-body-style */
         return element.type === 'p';
       });
@@ -292,7 +290,7 @@ export default class BlogPost extends React.Component {
     }
     const alternateListPosition = 4;
     const position = showSiblingArticlesList ? secondaryListPosition + alternateListPosition : secondaryListPosition;
-    return blogPostTextElements.splice(position, 0, secondaryList);
+    return blogPostText.splice(position, 0, secondaryList);
   }
 
   addSiblingsList(siblingListProps) {
@@ -305,13 +303,14 @@ export default class BlogPost extends React.Component {
       issueSiblingsList,
       articleListPosition,
       nextArticleLink,
+      blogPostText,
     } = siblingListProps;
     if (!issueSiblingsList || !showSiblingArticlesList) {
       return;
     }
     const siblingArticles = showSiblingArticlesList && issueSiblingsList ?
     issueSiblingsList : null;
-    const { sideText, siblingListSideTitle, articleFootNote } = this.props;
+    const { sideText, siblingListSideTitle } = this.props;
     const siblingListData = {
       siblingArticles,
       flyTitle,
@@ -321,21 +320,15 @@ export default class BlogPost extends React.Component {
       siblingListSideTitle,
     };
     const siblingArticlesList = showSiblingArticlesList ? siblingList(siblingListData) : null;
-    let blogPostTextElements = null;
-    if (showSiblingArticlesList || articleFootNote) {
-      blogPostTextElements = this.filterBlogPostTextElements(content);
-    }
-    if (showSiblingArticlesList && (blogPostTextElements || (content && nextArticleLink))) {
-      blogPostTextElements.splice(articleListPosition, 0, siblingArticlesList);
+    if (showSiblingArticlesList && (blogPostText || (content && nextArticleLink))) {
+      blogPostText.splice(articleListPosition, 0, siblingArticlesList);
       content.splice(content.length - 1, 0, nextArticleLink);
     }
   }
 
-  addArticleFootNote(content, articleFootNote) {
-    let blogPostTextElements = null;
-    if (articleFootNote) {
-      blogPostTextElements = this.filterBlogPostTextElements(content);
-      blogPostTextElements.push(articleFootNote);
+  addArticleFootNote(blogPostText, articleFootNote) {
+    if (blogPostText && articleFootNote) {
+      blogPostText.push(articleFootNote);
     }
   }
 
@@ -461,9 +454,10 @@ export default class BlogPost extends React.Component {
         </div>
       </div>
     );
-    this.moveBottomMobileAd(content);
+    const blogPostText = this.filterBlogPostTextElements(content);
+    this.moveBottomMobileAd(content, blogPostText);
     if (printEdition && articleFootNote) {
-      this.addArticleFootNote(content, articleFootNote);
+      this.addArticleFootNote(blogPostText, articleFootNote);
     }
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
@@ -481,13 +475,14 @@ export default class BlogPost extends React.Component {
       articleListPosition,
       nextArticleLink,
       printEdition,
+      blogPostText,
     };
     this.addSiblingsList(siblingListProps);
     this.addSecondaryList(
       secondaryList,
       secondaryListPosition,
-      content,
-      showSiblingArticlesList
+      showSiblingArticlesList,
+      blogPostText
     );
     return (
       <article

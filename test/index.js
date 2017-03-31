@@ -4,11 +4,9 @@ import BlogPost, { generateBlogPostFlyTitle } from '../src';
 import MobileDetect from 'mobile-detect';
 import React from 'react';
 import chai from 'chai';
-import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import chaiEnzyme from 'chai-enzyme';
 import { mount } from 'enzyme';
-import createFragment from 'react-addons-create-fragment'
 chai.use(chaiEnzyme()).should();
 chai.use(sinonChai);
 
@@ -22,10 +20,10 @@ const requiredProps = {
   flyTitle: 'Required flyTitle',
   section: 'Required section',
   text: [
-    "paragraph 1",
-    "paragraph 2",
-    "paragraph 3",
-    "paragraph 4",
+    'paragraph 1',
+    'paragraph 2',
+    'paragraph 3',
+    'paragraph 4',
   ],
   title: 'Required title',
   type: 'blog',
@@ -41,62 +39,19 @@ const requiredProps = {
   TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
 };
 
-const otherProps = {
-  flyTitle: 'Other flyTitle',
-  section: 'Other section',
-  text: [
-    "paragraph 1",
-    "paragraph 2",
-    "paragraph 3",
-    "paragraph 4",
-  ],
-  title: 'Other title',
-  type: 'blog',
-  id: 'test blog',
-  publicationDate: '02/03/04',
-  commentCount: 10,
-  commentsUri: 'http://google.com',
-  viewCommentsLabel: 'foo',
-  commentStatus: 'readwrite',
+const siblingListProps = {
   issueSiblingsList: [
-    {key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com'},
-    {key: '2', flyTitle: 'flytitle2', title: 'title2', webURL: 'www.2.com'},
-    {key: '3', flyTitle: 'flytitle3', title: 'title3', webURL: 'www.3.com'},
+    { key: '1', flyTitle: 'flytitle1', title: 'title1', webURL: 'www.1.com' },
+    { key: '2', flyTitle: 'flytitle2', title: 'title2', webURL: 'www.2.com' },
+    { key: '3', flyTitle: 'flytitle3', title: 'title3', webURL: 'www.3.com' },
   ],
   showSiblingArticlesList: true,
   elementClassName: 'blog-post__classname',
   sectionName: 'Special report',
   sideText: 'More in this report',
-  TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
-}
-
-const moreProps = {
-  flyTitle: 'Required flyTitle',
-  section: 'Required section',
-  text: [
-    createFragment({children: ['paragraph1']}),
-    createFragment({children: ['paragraph2']}),
-    createFragment({children: ['paragraph3']}),
-  ],
-  title: 'Required title',
-  type: 'blog',
-  id: 'test blog',
-  publicationDate: '01/02/03',
-  commentCount: 10,
-  commentsUri: 'http://google.com',
-  viewCommentsLabel: 'foo',
-  commentStatus: 'readwrite',
-  elementClassName: 'blog-post__classname',
-  sectionName: 'Section name',
-  secondaryListModifier: 'modifier',
-  TitleComponent: ({ flyTitle, title }) => (<div className="test-title-component">test: {flyTitle} {title}</div>),
-  articleFootNote: (<div className='articleFootNote'>articleFootNote</div>),
-  printEdition: true,
-}
+};
 
 const mountComponentWithProps = mountComponent(requiredProps);
-const mountComponentWithOtherProps = mountComponent(otherProps)
-const mountComponentWithMoreProps = mountComponent(moreProps)
 describe('BlogPost', () => {
   it('is compatible with React.Component', () => {
     BlogPost.should.be.a('function')
@@ -134,7 +89,14 @@ describe('BlogPost', () => {
     });
 
     it('should render a footnote if provided', () => {
-      const blog = mountComponentWithMoreProps();
+      Object.assign(
+        requiredProps,
+        {
+          articleFootNote: (<div className="articleFootNote" key="footNote">articleFootNote</div>),
+          printEdition: true,
+        }
+      );
+      const blog = mountComponentWithProps();
       blog.find('.blog-post__text').should.have.exactly(1).descendants('.articleFootNote');
     });
 
@@ -143,11 +105,16 @@ describe('BlogPost', () => {
   describe('Blog post siblings list', () => {
     let post = null;
     before(() => {
-      post = mountComponentWithOtherProps();
+      // Resetting requiredProps before running these tests.
+      Reflect.deleteProperty(requiredProps, 'articleFootNote');
+      Reflect.deleteProperty(requiredProps, 'printEdition');
+      requiredProps.text.pop();
+      Object.assign(requiredProps, siblingListProps);
+      post = mountComponentWithProps();
     });
 
     it('renders sideText given from props', () => {
-      post.find('.blog-post__side-text').should.have.text(otherProps.sideText);
+      post.find('.blog-post__side-text').should.have.text(requiredProps.sideText);
     });
 
     it('renders a list of siblings', () => {
@@ -158,25 +125,28 @@ describe('BlogPost', () => {
 
   describe('Generate blog post flyTitle', () => {
     it('should generate just the report title if flytitle is the same', () => {
-      const blogPostFlyTitle = generateBlogPostFlyTitle(true, "report title", "report title");
-      blogPostFlyTitle.should.equal("report title");
+      const blogPostFlyTitle = generateBlogPostFlyTitle(true, 'report title', 'report title');
+      blogPostFlyTitle.should.equal('report title');
     });
 
     it('should return the report title and flyTitle if they are different', () => {
-      const blogPostFlyTitle = generateBlogPostFlyTitle(true, "report title", "flyTitle");
-      blogPostFlyTitle.should.equal("report title: flyTitle");
-    })
+      const blogPostFlyTitle = generateBlogPostFlyTitle(true, 'report title', 'flyTitle');
+      blogPostFlyTitle.should.equal('report title: flyTitle');
+    });
   });
 
   describe('Comments', () => {
     it('renders the comments (#comments > 0)', () => {
+      // Resetting requiredProps before running these tests.
+      Reflect.deleteProperty(requiredProps, 'issueSiblingsList');
+      Reflect.deleteProperty(requiredProps, 'showSiblingArticlesList');
       const post = mountComponentWithProps({
         commentCount: 10,
-        viewCommentsLabel: 'foo'
+        viewCommentsLabel: 'foo',
       });
       post.should.have.exactly(2).descendants('.blog-post__comments');
       const comments = post.find('.blog-post__comments');
-      comments.forEach(node => node.should.have.attr('href', requiredProps.commentsUri));
+      comments.forEach((node) => node.should.have.attr('href', requiredProps.commentsUri));
       post.find('.blog-post__comments-label').should.have.text('foo');
     });
 
@@ -184,7 +154,7 @@ describe('BlogPost', () => {
       const post = mountComponentWithProps({ commentCount: 0 });
       post.should.have.exactly(2).descendants('.blog-post__comments');
       const comments = post.find('.blog-post__comments');
-      comments.forEach(node => node.should.have.attr('href', requiredProps.commentsUri));
+      comments.forEach((node) => node.should.have.attr('href', requiredProps.commentsUri));
       post.find('.blog-post__comments-label').should.have.text('Be the first to comment');
     });
 
@@ -259,9 +229,9 @@ describe('BlogPost', () => {
       <div key="1" className="paragraph">paragraph 1</div>,
       <div key="2" className="inline-ad">inline advert 1</div>,
       <div key="3" className="paragraph">paragraph 2</div>,
-      <div key="4" className="inline-ad">inline advert 2</div>
-    ]
-    const blogPostText = mountComponentWithProps({ text: text }).find('.blog-post__text');
+      <div key="4" className="inline-ad">inline advert 2</div>,
+    ];
+    const blogPostText = mountComponentWithProps({ text }).find('.blog-post__text');
     blogPostText.should.have.exactly(2).descendants('.paragraph');
     blogPostText.contains(
       <div key="2" className="inline-ad">inline advert 1</div>
@@ -320,23 +290,21 @@ describe('BlogPost', () => {
 
       it('should feature the twitter and facebook share buttons', () => {
         const post = mountComponentWithProps();
-        post.find('.share__icon--twitter').find('a').forEach(function (node) {
+        post.find('.share__icon--twitter').find('a').forEach((node) => {
           node.should.have.attr('href', 'https://twitter.com/intent/tweet?url=');
         });
-        post.find('.share__icon--facebook').find('a').forEach(function (node) {
+        post.find('.share__icon--facebook').find('a').forEach((node) => {
           node.should.have.attr('href', 'http://www.facebook.com/sharer/sharer.php?u=');
         });
       });
 
       it('should show the other providers when clicking on the share button', () => {
         const post = mountComponentWithProps();
-
-        post.find('.blog-post__toggle-share').forEach(function (node) {
+        post.find('.blog-post__toggle-share').forEach((node) => {
           node.should.have.className('balloon--not-visible');
           node.find('a.balloon__link').simulate('click');
           node.should.have.className('balloon--visible');
           const balloonContentNode = node.find('.balloon-content');
-
           balloonContentNode.should.have.exactly(1).descendants('.share__icon--linkedin');
           balloonContentNode.find('.share__icon--linkedin').find('a')
             .should.have.attr('href', 'https://www.linkedin.com/cws/share?url=');
@@ -365,18 +333,17 @@ describe('BlogPost', () => {
 
       it('shows some share providers outside the more menu', () => {
         const post = mountComponentWithProps();
-        post.find('.share__icon--twitter').find('a').forEach(function (node) {
+        post.find('.share__icon--twitter').find('a').forEach((node) => {
           node.should.have.attr('href', 'https://twitter.com/intent/tweet?url=');
         });
-        post.find('.share__icon--facebook').find('a').forEach(function (node) {
+        post.find('.share__icon--facebook').find('a').forEach((node) => {
           node.should.have.attr('href', 'http://www.facebook.com/sharer/sharer.php?u=');
         });
       });
 
       it('should show the mobile providers', () => {
         const post = mountComponentWithProps();
-
-        post.find('.blog-post__toggle-share-mobile').forEach(function (node) {
+        post.find('.blog-post__toggle-share-mobile').forEach((node) => {
           const balloonContentNode = node.find('.balloon-content');
           balloonContentNode.should.have.exactly(1).descendants('.share__icon--linkedin');
           balloonContentNode.find('.share__icon--linkedin').find('a')
