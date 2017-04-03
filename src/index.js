@@ -456,8 +456,8 @@ export default class BlogPost extends React.Component {
     );
     const blogPostText = this.filterBlogPostTextElements(content);
     this.moveBottomMobileAd(content, blogPostText);
-    if (printEdition && articleFootNote) {
-      this.addArticleFootNote(blogPostText, articleFootNote);
+    if (printEdition && articleFootNote && blogPostText) {
+      blogPostText.push(articleFootNote);
     }
     const TitleComponent = this.props.TitleComponent;
     const articleHeader = showSiblingArticlesList ? (
