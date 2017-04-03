@@ -326,12 +326,6 @@ export default class BlogPost extends React.Component {
     }
   }
 
-  addArticleFootNote(blogPostText, articleFootNote) {
-    if (blogPostText && articleFootNote) {
-      blogPostText.push(articleFootNote);
-    }
-  }
-
   generateWrappedInnerContent(asideableContent) {
     let wrappedInnerContent = [];
     wrappedInnerContent = this.addImage(wrappedInnerContent, this.props.image);
