@@ -208,8 +208,22 @@ export default class BlogPost extends React.Component {
           {section}
         </a>
       ) : section;
+      const BlogPostSectionElement =
+              typeof this.props.i13nConfig !== 'undefined' ?
+              this.props.i13nConfig.i13nOperations.generateI13nNode(BlogPostSection, false) :
+              BlogPostSection;
+
       return sectionDateAuthor.concat(
-        <BlogPostSection key="blog-post__section" section={blogPostSection} />
+        <BlogPostSectionElement
+          key="blog-post__section"
+          section={blogPostSection}
+          i13nModel={
+            this.props.i13nConfig.i13nOperations.createI13nModel(
+              this.props.i13nConfig.modules.BlogPostSectionModule, 'module'
+            ) || null
+          }
+          i13nConfig={this.props.i13nConfig}
+        />
       );
     }
     return sectionDateAuthor;
@@ -357,15 +371,20 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
-  addShareBar() {
+  addShareBar(shareBarInstance) {
     // Share bar publicationDate formatted
     let shareBarPublicateDate = new Date(this.props.publicationDate * 1000) // eslint-disable-line
     shareBarPublicateDate = `${ String(shareBarPublicateDate.getFullYear()) }
     ${ String(twoDigits(shareBarPublicateDate.getMonth() + 1)) }
     ${ String(twoDigits(shareBarPublicateDate.getDate())) }`.replace(/\s/g, '');
     const sharebarType = this.props.type === 'post' ? 'BL' : 'A';
+    const i13nConfig = this.props.i13nConfig;
+    const ShareBarElement =
+                          typeof i13nConfig.modules[shareBarInstance] === 'undefined' ?
+                          ShareBar : i13nConfig.i13nOperations.generateI13nNode(ShareBar, false);
+
     const shareBarDefault =
-      (<ShareBar
+      (<ShareBarElement
         key="sharebar"
         type={sharebarType}
         title={this.props.title}
@@ -374,6 +393,13 @@ export default class BlogPost extends React.Component {
         contentID={this.props.id}
         desktopIcons={this.props.shareBarDesktopIcons}
         mobileIcons={this.props.shareBarMobileIcons}
+        i13nModel={
+          i13nConfig.i13nOperations.createI13nModel(i13nConfig.modules[shareBarInstance], 'module') || null
+        }
+        i13nProps={{
+          module_id: i13nConfig.modules[shareBarInstance].module.id ? i13nConfig.modules[shareBarInstance].module.id : null,
+        }}
+        i13nConfig={this.props.i13nConfig}
        />);
     return { shareBarDefault, shareBarPublicateDate, sharebarType };
   }
@@ -392,6 +418,7 @@ export default class BlogPost extends React.Component {
       secondaryList,
       secondaryListPosition,
       articleFootNote,
+      i13nConfig,
     } = this.props;
     const siblingsListTitle = this.props.sectionName;
     const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
@@ -412,7 +439,7 @@ export default class BlogPost extends React.Component {
         </div>
       );
     }
-    const { shareBarDefault, shareBarPublicateDate, sharebarType } = this.addShareBar();
+    const { shareBarDefault, shareBarPublicateDate, sharebarType } = this.addShareBar('ShareBarModule');
     asideableContent.push(
       shareBarDefault
     );
@@ -431,11 +458,13 @@ export default class BlogPost extends React.Component {
       asideableContent.push(<Comments {...commentProps} hideLabel />);
     }
     const wrappedInnerContent = this.generateWrappedInnerContent(asideableContent);
+    // debugger;
+    const { shareBarDefault: shareBarBottom } = this.addShareBar('ShareBarBottomModule');
     content.push(<div className="blog-post__inner" key="inner-content">{wrappedInnerContent}</div>);
     content.push(
       <div className="blog-post__bottom-panel" key="blog-post__bottom-panel">
         <div className="blog-post__bottom-panel-top">
-          {shareBarDefault}
+          {shareBarBottom}
           {commentSection}
         </div>
         <div className="blog-post__bottom-panel-bottom">

@@ -80,7 +80,6 @@
       }
     },
     "ghooks": {
-      "pre-commit": "npm run lint",
       "commit-msg": "validate-commit-msg"
     }
   },
