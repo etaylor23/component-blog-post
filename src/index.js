@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, id-match, func-names, react/jsx-no-bind, arrow-body-style  */
+/* eslint-disable camelcase, id-match  */
 
 import Author from './parts/author';
 import BlogPostImage from './parts/blog-post-image';
@@ -142,6 +142,19 @@ export default class BlogPost extends React.Component {
           `${ date.getHours() }:${ minutes }` ].join(' ');
       },
     };
+  }
+
+  constructor(props) {
+    super(props);
+    this.generateShareBar = this.generateShareBar.bind(this, props.i13nFunction);
+  }
+
+  generateShareBar(i13nFunction, config) {
+    return this.addShareBar(
+      typeof i13nFunction === 'undefined' ? null :
+        i13nFunction.createI13nModel(i13nFunction.createModule(config), 'module'),
+      config.id
+    );
   }
 
   addDateTime(sectionDateAuthor, props) {
@@ -369,13 +382,6 @@ export default class BlogPost extends React.Component {
     return sectionDateAuthor;
   }
 
-  checkExists(checkStub, checkProp, ifExist, ifNotExist) {
-    if (checkStub && checkStub[checkProp]) {
-      return ifExist();
-    }
-    return ifNotExist();
-  }
-
   addShareBar(i13nModel) {
     // Share bar publicationDate formatted
     let shareBarPublicateDate = new Date(this.props.publicationDate * 1000) // eslint-disable-line
@@ -387,17 +393,7 @@ export default class BlogPost extends React.Component {
       i13n,
       i13nFunction,
     } = this.props;
-    const ShareBarElement =
-    this.checkExists(
-      this.props,
-      'i13nFunction',
-      function () {
-        return this[0].generateI13nNode(this[1], false);
-      }.bind([ i13nFunction, ShareBar ]),
-      function () {
-        return this[0];
-      }.bind([ ShareBar ])
-    );
+    const ShareBarElement = i13nModel === null ? ShareBar : i13nFunction.generateI13nNode(ShareBar, false);
     const shareBarDefault =
       (<ShareBarElement
         key="sharebar"
@@ -429,7 +425,6 @@ export default class BlogPost extends React.Component {
       secondaryList,
       secondaryListPosition,
       articleFootNote,
-      i13nFunction,
     } = this.props;
     const siblingsListTitle = this.props.sectionName;
     const elementClassName = showSiblingArticlesList && this.props.classNameModifier ?
@@ -458,20 +453,7 @@ export default class BlogPost extends React.Component {
       name: 'share-bar',
       items: [],
     };
-    const { shareBarDefault, shareBarPublicateDate, sharebarType } =
-    this.addShareBar(
-      this.checkExists(
-        this.props,
-        'i13nFunction',
-        function () {
-          return this[0].createI13nModel(this[0].createModule(this[1]), 'module');
-        }.bind([ i13nFunction, shareBarTop ]),
-        () => {
-          return null;
-        }
-      ),
-      'blog-post_share-bar-top'
-    );
+    const { shareBarDefault, shareBarPublicateDate, sharebarType } = this.generateShareBar(shareBarTop);
     asideableContent.push(
       shareBarDefault
     );
@@ -498,20 +480,7 @@ export default class BlogPost extends React.Component {
       name: 'share-bar',
       items: [],
     };
-    const { shareBarDefault: shareBarBottom } =
-    this.addShareBar(
-      this.checkExists(
-        this.props,
-        'i13nFunction',
-        function () {
-          return this[0].createI13nModel(this[0].createModule(this[1]), 'module');
-        }.bind([ i13nFunction, shareBarBottomConfig ]),
-        () => {
-          return null;
-        }
-      ),
-      'blog-post_share-bar-bottom'
-    );
+    const { shareBarDefault: shareBarBottom } = this.generateShareBar(shareBarBottomConfig);
     content.push(<div className="blog-post__inner" key="inner-content">{wrappedInnerContent}</div>);
     content.push(
       <div className="blog-post__bottom-panel" key="blog-post__bottom-panel">
