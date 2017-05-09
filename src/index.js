@@ -1,5 +1,4 @@
 /* eslint-disable camelcase, id-match  */
-
 import Author from './parts/author';
 import BlogPostImage from './parts/blog-post-image';
 import BlogPostSection from './parts/blog-post-section';
@@ -393,9 +392,9 @@ export default class BlogPost extends React.Component {
       i13n,
       i13nFunction,
     } = this.props;
-    const ShareBarElement = i13nModel === null ? ShareBar : i13nFunction.generateI13nNode(ShareBar, false);
+    const I13nShareBar = i13nModel === null ? ShareBar : i13nFunction.generateI13nNode(ShareBar, false);
     const shareBarDefault =
-      (<ShareBarElement
+      (<I13nShareBar
         key="sharebar"
         type={sharebarType}
         title={this.props.title}
